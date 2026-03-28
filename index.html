@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlowFast - Thematic</title>
+    <style>
+        /* LIGHT MODE (Default) */
+        :root { 
+            --primary: #6366f1; /* Slightly darker indigo for better contrast on light */
+            --accent: #f59e0b; 
+            --pink: #ec4899; 
+            --success: #10b981; 
+            --warning: #f43f5e; 
+            --water: #0ea5e9; 
+            
+            --bg: #f1f5f9; 
+            --card: #ffffff; 
+            --text: #0f172a; 
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --input-bg: #f8fafc;
+            --stage-bg: #f8fafc;
+            --stage-active: #ffffff;
+            --overlay: rgba(255, 255, 255, 0.95);
+        }
+
+        /* DARK MODE (Automatically triggers if your phone is in dark mode) */
+        @media (prefers-color-scheme: dark) {
+            :root { 
+                --primary: #818cf8; 
+                --accent: #fbbf24; 
+                --pink: #f472b6; 
+                --success: #10b981; 
+                --warning: #f43f5e; 
+                --water: #38bdf8; 
+                
+                --bg: #0f172a; 
+                --card: #1e293b; 
+                --text: #f8fafc; 
+                --text-muted: #94a3b8;
+                --border: #334155;
+                --input-bg: #0f172a;
+                --stage-bg: #0f172a;
+                --stage-active: #334155;
+                --overlay: rgba(15, 23, 42, 0.95);
+            }
+        }
+
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 0; margin: 0; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
+        .app-container { background: var(--card); width: 100%; max-width: 440px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; display: flex; flex-direction: column; height: 100vh; max-height: 850px; transition: background-color 0.3s; }
+        .content-area { padding: 2rem; overflow-y: auto; flex-grow: 1; padding-bottom: 80px; }
+        .hidden { display: none !important; }
+        
+        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0 15px 0; border-radius: 8px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); box-sizing: border-box; font-family: inherit; transition: 0.3s; }
+        
+        .toggle-container { display: flex; align-items: center; justify-content: space-between; background: var(--input-bg); padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--border); transition: 0.3s; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--pink); }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        button { width: 100%; padding: 1rem; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        button:active { transform: scale(0.98); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--warning); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-muted); margin-top: 10px; }
+        .btn-sos { background: transparent; color: var(--text-muted); text-decoration: underline; font-size: 0.8rem; padding: 10px; margin-top: 5px; }
+
+        .bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0; z-index: 10; transition: 0.3s; }
+        .nav-item { background: transparent; color: var(--text-muted); padding: 10px; border-radius: 8px; width: 45%; font-size: 0.9rem; }
+        .nav-item.active { background: var(--input-bg); color: var(--primary); border: 1px solid var(--border); }
+
+        .header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .greeting { font-size: 1.2rem; font-weight: 600; color: var(--primary); }
+        .streak-badge { background: rgba(251, 191, 36, 0.1); color: var(--accent); padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; border: 1px solid var(--accent); }
+        
+        .timer-display { font-size: 3.5rem; font-weight: 800; text-align: center; margin: 10px 0; font-variant-numeric: tabular-nums; position: relative; }
+        .timer-label { text-align: center; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .edit-time-btn { background: var(--border); color: var(--text); border: none; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.7rem; padding: 0; }
+
+        .water-card { background: var(--input-bg); border-radius: 12px; padding: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); transition: 0.3s; }
+        .water-drops { display: flex; gap: 5px; font-size: 1.2rem; cursor: pointer; }
+        .drop { opacity: 0.2; transition: 0.3s; filter: grayscale(100%); }
+        .drop.filled { opacity: 1; filter: grayscale(0%); text-shadow: 0 0 5px var(--water); }
+
+        .roadmap { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .stage { padding: 15px; border-radius: 12px; background: var(--stage-bg); opacity: 0.5; border-left: 4px solid transparent; transition: 0.4s ease; line-height: 1.4; border: 1px solid transparent; }
+        .stage.active { opacity: 1; border-left-color: var(--accent); background: var(--stage-active); transform: scale(1.02); box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border); border-left: 4px solid var(--accent); }
+        .stage.complete { opacity: 0.7; border-left-color: var(--success); }
+        .stage-title { font-weight: bold; font-size: 0.85rem; display: block; color: var(--accent); margin-bottom: 5px; letter-spacing: 0.5px; }
+        .stage-desc { font-size: 0.8rem; color: var(--text-muted); }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; color: var(--text); }
+        th { text-align: left; padding: 12px 10px; border-bottom: 2px solid var(--border); color: var(--primary); }
+        td { padding: 12px 10px; border-bottom: 1px solid var(--border); }
+
+        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; box-sizing: border-box; z-index: 20; text-align: center; backdrop-filter: blur(5px); overflow-y: auto; transition: 0.3s; }
+        .modal-overlay h2 { margin-top: 0; }
+        .modal-overlay p { font-size: 0.9rem; line-height: 1.5; color: var(--text); margin-bottom: 20px; }
+        .guideline-box { background: var(--card); border-left: 4px solid var(--accent); border-right: 1px solid var(--border); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 15px; font-size: 0.85rem; width: 100%; box-sizing: border-box; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+
+        .food-list { margin: 10px 0 0 0; padding-left: 20px; color: var(--text-muted); }
+        .food-list li { margin-bottom: 8px; }
+        .food-list strong { color: var(--text); }
+
+        .eating-ui { background: rgba(16, 185, 129, 0.05); border: 1px solid var(--success); padding: 15px; border-radius: 12px; margin-top: 15px; text-align: center; }
+        .retro-box { margin-top: 15px; padding: 15px; background: var(--input-bg); border-radius: 12px; border: 1px dashed var(--success); text-align: left; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="content-area">
+        
+        <div id="profileScreen">
+            <h2 style="color: var(--primary);">Your Profile</h2>
+            <label style="color: var(--text-muted); font-size: 0.85rem;">Name</label>
+            <input type="text" id="userName">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div><label style="color: var(--text-muted); font-size: 0.85rem;">Age</label><input type="number" id="age"></div>
+                <div><label style="color: var(--text-muted); font-size: 0.85rem;">Gender</label>
+                    <select id="gender" onchange="toggleCycleView()">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+            </div>
+            
+            <label style="color: var(--text-muted); font-size: 0.85rem;">Dietary Preference</label>
+            <select id="dietPref">
+                <option value="any">No Restrictions (Omnivore)</option>
+                <option value="vegetarian">Vegetarian</option>
+                <option value="vegan">Vegan</option>
+                <option value="gf">Gluten-Free</option>
+            </select>
+
+            <div id="cycleView" class="hidden">
+                <div class="toggle-container">
+                    <span style="font-size: 0.9rem; color: var(--text);">Luteal Phase?</span>
+                    <label class="switch"><input type="checkbox" id="lutealToggle"><span class="slider"></span></label>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div><label style="color: var(--text-muted); font-size: 0.85rem;">Weight (kg)</label><input type="number" id="weight"></div>
+                <div><label style="color: var(--text-muted); font-size: 0.85rem;">Height (cm)</label><input type="number" id="height"></div>
+            </div>
+            <button class="btn-primary" onclick="saveProfile()" style="margin-top: 10px;">Save Profile</button>
+        </div>
+
+        <div id="trackerScreen" class="hidden">
+            <div class="header-row">
+                <div>
+                    <div class="greeting" id="displayGreeting">Hello!</div>
+                    <div id="planBadge" style="font-size: 0.75rem; color: var(--accent); font-weight: bold; margin-top: 2px;"></div>
+                </div>
+                <div style="text-align: right;">
+                    <div class="streak-badge" id="streakBadge">🔥 0 Days</div>
+                    <button onclick="editProfile()" style="width: auto; padding: 4px 10px; font-size: 0.7rem; margin-top: 5px;" class="btn-outline">Edit</button>
+                </div>
+            </div>
+            
+            <div class="water-card">
+                <span style="font-size: 0.85rem; color: var(--text-muted);">Water (250ml)</span>
+                <div class="water-drops" id="waterContainer">
+                    <span class="drop" onclick="addWater(1)">💧</span><span class="drop" onclick="addWater(2)">💧</span>
+                    <span class="drop" onclick="addWater(3)">💧</span><span class="drop" onclick="addWater(4)">💧</span>
+                    <span class="drop" onclick="addWater(5)">💧</span><span class="drop" onclick="addWater(6)">💧</span>
+                    <span class="drop" onclick="addWater(7)">💧</span><span class="drop" onclick="addWater(8)">💧</span>
+                </div>
+            </div>
+            
+            <div class="timer-label" id="timerLabel">
+                <span id="labelText">FASTING TIME</span>
+                <button id="editTimeBtn" class="edit-time-btn hidden" onclick="openEditTimeModal()" title="Edit Start Time">✏️</button>
+            </div>
+            <div class="timer-display" id="timer">00:00:00</div>
+
+            <div id="startControls">
+                <button class="btn-primary" onclick="startFast()">Start Fast Now</button>
+                <div style="margin-top: 15px; padding: 15px; background: var(--input-bg); border-radius: 12px; border: 1px dashed var(--border);">
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Forgot to start? Set last meal time:</label>
+                    <input type="datetime-local" id="manualTime">
+                    <button class="btn-outline" style="width:100%; border-color: var(--primary); color: var(--primary);" onclick="manualStart('manualTime')">Catch Up Timer</button>
+                </div>
+            </div>
+
+            <div id="fastingControls" class="hidden">
+                <button class="btn-danger" onclick="confirmEndFast()">End Fast & Eat</button>
+                <button class="btn-sos" onclick="showSOS()">Struggling? Click here.</button>
+                
+                <h3 style="font-size: 0.9rem; color: var(--primary); margin-top: 25px; margin-bottom: 5px;">Inside Your Body:</h3>
+                <div class="roadmap">
+                    <div class="stage" id="stg1">
+                        <span class="stage-title">0-4H: ANABOLIC (DIGESTION)</span>
+                        <span class="stage-desc">Insulin levels are high. Excess is shuttled into your liver and muscles as glycogen. Fat burning is completely locked.</span>
+                    </div>
+                    <div class="stage" id="stg2">
+                        <span class="stage-title">4-12H: CATABOLIC (THE SWITCH)</span>
+                        <span class="stage-desc">Insulin drops. The body breaks down stored liver glycogen to keep blood sugar stable. Lipolysis begins.</span>
+                    </div>
+                    <div class="stage" id="stg3">
+                        <span class="stage-title">12-16H: KETOSIS (FAT BURNING)</span>
+                        <span class="stage-desc">Liver glycogen is depleted. Your body makes a major metabolic shift, converting fat cells into ketones for fuel.</span>
+                    </div>
+                    <div class="stage" id="stg4">
+                        <span class="stage-title">16H+: AUTOPHAGY & REPAIR</span>
+                        <span class="stage-desc">Deep cellular cleanup. Growth Hormone (HGH) spikes to protect muscle mass while inflammation drops.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="eatingControls" class="hidden eating-ui">
+                <p style="margin-top: 0; font-weight: bold; color: var(--success); font-size: 0.9rem;">Feasting Window Active</p>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">Prioritize protein and healthy fats.</p>
+                <button class="btn-outline" style="border-color: var(--success); color: var(--success); margin-bottom: 10px; background: transparent;" onclick="showNutritionModal()">💡 Quick Meal Ideas</button>
+                <button class="btn-success" onclick="endEatingStartFast()">Close Kitchen & Start Fast</button>
+                
+                <div class="retro-box">
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Finished eating earlier? Backdate your fast:</label>
+                    <input type="datetime-local" id="retroEatTime" style="border-color: var(--success); margin-bottom: 5px;">
+                    <button class="btn-outline" style="border-color: var(--success); color: var(--success); padding: 10px; background: transparent;" onclick="manualStart('retroEatTime')">Catch Up Timer</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="historyScreen" class="hidden">
+            <h2 style="margin-top: 0; color: var(--primary);">Your Fasting Log</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Track your consistency and gym progress.</p>
+            <table id="historyTable">
+                <thead><tr><th>Date</th><th>Started</th><th>Duration</th></tr></thead>
+                <tbody id="historyBody"></tbody>
+            </table>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn-primary" onclick="exportToCSV()">Export to CSV</button>
+                <button class="btn-outline" style="border-color: var(--warning); color: var(--warning); margin-top: 0;" onclick="clearHistory()">Clear History</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="bottom-nav" id="bottomNav" class="hidden">
+        <button class="nav-item active" id="navTracker" onclick="switchTab('tracker')">⏱️ Tracker</button>
+        <button class="nav-item" id="navHistory" onclick="switchTab('history')">📋 History</button>
+    </div>
+
+    <div id="editTimeModal" class="modal-overlay hidden">
+        <h2 style="color: var(--primary);">Edit Start Time</h2>
+        <p>Adjust when your fast actually started to fix your timer.</p>
+        <div class="guideline-box" style="border-left-color: var(--primary);">
+            <input type="datetime-local" id="editManualTime" style="margin-bottom: 0;">
+        </div>
+        <button class="btn-primary" onclick="saveEditedTime()">Save Changes</button>
+        <button class="btn-outline" style="border:none;" onclick="hideEditTimeModal()">Cancel</button>
+    </div>
+
+    <div id="sosModal" class="modal-overlay hidden">
+        <h2 style="color: var(--accent);">Let's Check In</h2>
+        <div class="guideline-box" style="border-left-color: var(--water);">
+            <strong style="color: var(--water);">"I'm just really hungry / craving."</strong><br>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">This is a Ghrelin wave. It passes in 20 minutes. Drink water and wait.</span>
+            <button class="btn-outline" style="color: var(--text); border-color: var(--water);" onclick="hideSOS()">I'll drink water.</button>
+        </div>
+        <div class="guideline-box" style="border-left-color: var(--warning);">
+            <strong style="color: var(--warning);">"I'm dizzy or very weak."</strong><br>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">This is Hypoglycemia. Break the fast safely now.</span>
+            <button class="btn-danger" style="margin-top: 10px;" onclick="hideSOS(); confirmEndFast();">Break my fast.</button>
+        </div>
+        <button class="btn-sos" onclick="hideSOS()">Close</button>
+    </div>
+
+    <div id="breakFastModal" class="modal-overlay hidden">
+        <h2 style="color: var(--success);">🎉 Fast Completed!</h2>
+        <div class="guideline-box" style="border-left-color: var(--success);">
+            <strong>1. Hydrate First:</strong> Drink a large glass of water.<br><br>
+            <strong>2. Protein Opener:</strong> Break the fast with protein and fats.<br><br>
+            <strong>3. The 30-Min Rule:</strong> Wait 30 mins before eating heavy carbs.
+        </div>
+        <button class="btn-success" onclick="startEatingWindow()">Start Eating Window</button>
+    </div>
+
+    <div id="nutritionModal" class="modal-overlay hidden">
+        <h2 style="color: var(--success); margin-bottom: 5px;">Feasting Cheat Sheet</h2>
+        <p style="margin-top: 0; font-size: 0.8rem; color: var(--text-muted);" id="dietDisplay">Tailored to your preferences.</p>
+        <div class="guideline-box" style="border-left-color: var(--water);">
+            <strong style="color: var(--water); font-size: 0.95rem;">⚡ Quick Protein Options</strong>
+            <ul class="food-list" id="proteinList"></ul>
+        </div>
+        <div class="guideline-box" style="border-left-color: var(--success);">
+            <strong style="color: var(--success); font-size: 0.95rem;">🥑 Quick Healthy Fats</strong>
+            <ul class="food-list" id="fatList"></ul>
+        </div>
+        <button class="btn-success" onclick="hideNutritionModal()">Got it!</button>
+    </div>
+
+</div>
+
+<script>
+    let globalTimer;
+
+    function toggleCycleView() {
+        const isFemale = document.getElementById('gender').value === 'female';
+        document.getElementById('cycleView').classList.toggle('hidden', !isFemale);
+    }
+
+    function switchTab(tab) {
+        document.getElementById('trackerScreen').classList.add('hidden');
+        document.getElementById('historyScreen').classList.add('hidden');
+        document.getElementById('navTracker').classList.remove('active');
+        document.getElementById('navHistory').classList.remove('active');
+
+        if(tab === 'tracker') {
+            document.getElementById('trackerScreen').classList.remove('hidden');
+            document.getElementById('navTracker').classList.add('active');
+        } else {
+            document.getElementById('historyScreen').classList.remove('hidden');
+            document.getElementById('navHistory').classList.add('active');
+            updateHistoryTable();
+        }
+    }
+
+    function saveProfile() {
+        const p = {
+            name: document.getElementById('userName').value || "Friend",
+            age: document.getElementById('age').value,
+            gender: document.getElementById('gender').value,
+            diet: document.getElementById('dietPref').value,
+            weight: document.getElementById('weight').value,
+            height: document.getElementById('height').value,
+            isLuteal: document.getElementById('lutealToggle').checked
+        };
+        if(!p.age || !p.weight) return alert("Please fill in age and weight.");
+        let fastGoal = (p.gender === 'female' && p.isLuteal) ? 13 : (p.weight / ((p.height/100)**2) > 28 ? 18 : 16);
+        localStorage.setItem('fastProfile', JSON.stringify({...p, fastGoal, eatGoal: 24 - fastGoal}));
+        showTracker();
+    }
+
+    function showTracker() {
+        const p = JSON.parse(localStorage.getItem('fastProfile'));
+        document.getElementById('profileScreen').classList.add('hidden');
+        document.getElementById('trackerScreen').classList.remove('hidden');
+        document.getElementById('bottomNav').style.display = "flex";
+        
+        document.getElementById('displayGreeting').innerText = `Keep it up, ${p.name}!`;
+        document.getElementById('planBadge').innerText = `${p.fastGoal}:${p.eatGoal} CYCLE PLAN` + (p.isLuteal ? " (LUTEAL)" : "");
+        
+        setLocalTimeInputs();
+        checkDailyWaterReset();
+        calculateStreak();
+        checkActiveState();
+    }
+
+    function setLocalTimeInputs() {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        const timeString = now.toISOString().slice(0,16);
+        document.getElementById('manualTime').value = timeString;
+        document.getElementById('retroEatTime').value = timeString;
+    }
+
+    function editProfile() {
+        const p = JSON.parse(localStorage.getItem('fastProfile'));
+        document.getElementById('userName').value = p.name;
+        document.getElementById('age').value = p.age;
+        document.getElementById('gender').value = p.gender;
+        document.getElementById('dietPref').value = p.diet || 'any';
+        document.getElementById('weight').value = p.weight;
+        document.getElementById('height').value = p.height;
+        document.getElementById('lutealToggle').checked = p.isLuteal;
+        toggleCycleView();
+        
+        document.getElementById('profileScreen').classList.remove('hidden');
+        document.getElementById('trackerScreen').classList.add('hidden');
+        document.getElementById('historyScreen').classList.add('hidden');
+        document.getElementById('bottomNav').style.display = "none";
+    }
+
+    function startFast() { 
+        localStorage.setItem('fastStartTime', new Date().getTime()); 
+        localStorage.removeItem('eatStartTime');
+        checkActiveState(); 
+    }
+
+    function manualStart(inputId) {
+        const manualVal = document.getElementById(inputId).value;
+        if(!manualVal) return alert("Select a time!");
+        const startTime = new Date(manualVal).getTime();
+        if(startTime > new Date().getTime()) return alert("No future starts allowed!");
+        localStorage.setItem('fastStartTime', startTime);
+        localStorage.removeItem('eatStartTime');
+        checkActiveState();
+    }
+    
+    function openEditTimeModal() {
+        const currentStart = parseInt(localStorage.getItem('fastStartTime'));
+        if(!currentStart) return;
+        
+        const d = new Date(currentStart);
+        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+        document.getElementById('editManualTime').value = d.toISOString().slice(0,16);
+        
+        document.getElementById('editTimeModal').classList.remove('hidden');
+    }
+
+    function hideEditTimeModal() {
+        document.getElementById('editTimeModal').classList.add('hidden');
+    }
+
+    function saveEditedTime() {
+        const val = document.getElementById('editManualTime').value;
+        if(!val) return;
+        const newTime = new Date(val).getTime();
+        if(newTime > new Date().getTime()) return alert("No future dates allowed!");
+        
+        localStorage.setItem('fastStartTime', newTime);
+        document.getElementById('editTimeModal').classList.add('hidden');
+        updateFastingTimer();
+    }
+    
+    function confirmEndFast() { 
+        if(confirm("Ready to break your fast?")) {
+            const startStr = localStorage.getItem('fastStartTime');
+            const endTime = new Date();
+            const diff = endTime.getTime() - parseInt(startStr);
+            const history = JSON.parse(localStorage.getItem('fastHistory') || "[]");
+            history.unshift({
+                date: endTime.toLocaleDateString(),
+                start: new Date(parseInt(startStr)).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                duration: `${Math.floor(diff / 3600000)}h ${Math.floor((diff % 3600000) / 60000)}m`
+            });
+            localStorage.setItem('fastHistory', JSON.stringify(history));
+            document.getElementById('breakFastModal').classList.remove('hidden');
+        }
+    }
+
+    function startEatingWindow() {
+        localStorage.removeItem('fastStartTime');
+        localStorage.setItem('eatStartTime', new Date().getTime());
+        document.getElementById('breakFastModal').classList.add('hidden');
+        calculateStreak();
+        checkActiveState();
+    }
+
+    function endEatingStartFast() {
+        if(confirm("Close the kitchen and begin your next fast?")) startFast();
+    }
+
+    function checkActiveState() {
+        const fastStart = localStorage.getItem('fastStartTime');
+        const eatStart = localStorage.getItem('eatStartTime');
+        
+        document.getElementById('startControls').classList.add('hidden');
+        document.getElementById('fastingControls').classList.add('hidden');
+        document.getElementById('eatingControls').classList.add('hidden');
+        document.getElementById('editTimeBtn').classList.add('hidden');
+
+        if(globalTimer) { clearInterval(globalTimer); globalTimer = null; }
+
+        if (fastStart) {
+            document.getElementById('fastingControls').classList.remove('hidden');
+            document.getElementById('labelText').innerText = "FASTING TIME";
+            document.getElementById('editTimeBtn').classList.remove('hidden'); 
+            document.getElementById('timer').style.color = "var(--text)";
+            updateFastingTimer();
+            globalTimer = setInterval(updateFastingTimer, 1000);
+        } else if (eatStart) {
+            document.getElementById('eatingControls').classList.remove('hidden');
+            document.getElementById('labelText').innerText = "EATING WINDOW REMAINING";
+            document.getElementById('timer').style.color = "var(--success)";
+            setLocalTimeInputs(); 
+            updateEatingTimer();
+            globalTimer = setInterval(updateEatingTimer, 1000);
+        } else {
+            document.getElementById('startControls').classList.remove('hidden');
+            document.getElementById('labelText').innerText = "READY TO FAST";
+            document.getElementById('timer').innerText = "00:00:00";
+            document.getElementById('timer').style.color = "var(--text)";
+        }
+    }
+
+    function updateFastingTimer() {
+        const startStr = localStorage.getItem('fastStartTime');
+        if(!startStr) return;
+        const diff = new Date().getTime() - parseInt(startStr);
+        const hours = diff / 3600000;
+        const h = Math.floor(hours), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
+        document.getElementById('timer').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        
+        document.querySelectorAll('.stage').forEach(st => st.classList.remove('active', 'complete'));
+        if (hours < 4) document.getElementById('stg1').classList.add('active');
+        else if (hours < 12) { document.getElementById('stg1').classList.add('complete'); document.getElementById('stg2').classList.add('active'); }
+        else if (hours < 16) { document.getElementById('stg1').classList.add('complete'); document.getElementById('stg2').classList.add('complete'); document.getElementById('stg3').classList.add('active'); }
+        else { document.getElementById('stg1').classList.add('complete'); document.getElementById('stg2').classList.add('complete'); document.getElementById('stg3').classList.add('complete'); document.getElementById('stg4').classList.add('active'); }
+    }
+
+    function updateEatingTimer() {
+        const startStr = localStorage.getItem('eatStartTime');
+        const p = JSON.parse(localStorage.getItem('fastProfile'));
+        if(!startStr || !p) return;
+        
+        const eatDurationMs = p.eatGoal * 3600000;
+        const diff = (parseInt(startStr) + eatDurationMs) - new Date().getTime();
+        
+        if (diff <= 0) {
+            document.getElementById('timer').innerText = "00:00:00";
+            document.getElementById('labelText').innerText = "WINDOW CLOSED!";
+            document.getElementById('timer').style.color = "var(--warning)";
+            return;
+        }
+        const h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
+        document.getElementById('timer').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    }
+
+    function checkDailyWaterReset() {
+        const today = new Date().toLocaleDateString();
+        const savedDate = localStorage.getItem('waterDate');
+        if(savedDate !== today) {
+            localStorage.setItem('waterDate', today);
+            localStorage.setItem('waterCount', 0);
+        }
+        updateWaterUI();
+    }
+    function addWater(index) {
+        let count = parseInt(localStorage.getItem('waterCount') || 0);
+        if(count >= index) count = index - 1; else count = index;
+        localStorage.setItem('waterCount', count);
+        updateWaterUI();
+    }
+    function updateWaterUI() {
+        const count = parseInt(localStorage.getItem('waterCount') || 0);
+        const drops = document.getElementById('waterContainer').children;
+        for(let i=0; i<8; i++) {
+            if(i < count) drops[i].classList.add('filled');
+            else drops[i].classList.remove('filled');
+        }
+    }
+
+    function calculateStreak() {
+        const history = JSON.parse(localStorage.getItem('fastHistory') || "[]");
+        if(history.length === 0) { document.getElementById('streakBadge').innerText = "🔥 0 Days"; return; }
+        let streak = 0; let currentDate = new Date(); currentDate.setHours(0,0,0,0);
+        const latestLogDate = new Date(history[0].date); latestLogDate.setHours(0,0,0,0);
+        const diffDays = Math.floor((currentDate - latestLogDate) / (1000 * 60 * 60 * 24));
+        if(diffDays > 1) { document.getElementById('streakBadge').innerText = "🔥 0 Days"; return; }
+
+        let checkDate = latestLogDate;
+        for(let i=0; i<history.length; i++) {
+            const logDate = new Date(history[i].date); logDate.setHours(0,0,0,0);
+            if(logDate.getTime() === checkDate.getTime()) { streak++; checkDate.setDate(checkDate.getDate() - 1); } 
+            else if (logDate.getTime() > checkDate.getTime()) { continue; } else { break; }
+        }
+        document.getElementById('streakBadge').innerText = `🔥 ${streak} Day${streak !== 1 ? 's' : ''}`;
+    }
+
+    function showSOS() { document.getElementById('sosModal').classList.remove('hidden'); }
+    function hideSOS() { document.getElementById('sosModal').classList.add('hidden'); }
+    
+    function showNutritionModal() { 
+        const p = JSON.parse(localStorage.getItem('fastProfile'));
+        const diet = p.diet || 'any';
+        const pList = document.getElementById('proteinList');
+        const fList = document.getElementById('fatList');
+        
+        let proteinHTML = '';
+        let fatHTML = `
+            <li><strong>Handful of Nuts/Seeds:</strong> Almonds, walnuts, or pumpkin seeds.</li>
+            <li><strong>Avocado:</strong> Half an avocado on rice cakes or alongside your protein.</li>
+            <li><strong>Chia/Flax Seeds:</strong> Toss 2 tablespoons into a shake for 10g of fiber.</li>
+        `;
+
+        if (diet === 'vegan') {
+            document.getElementById('dietDisplay').innerText = "Plant-Based (Vegan) Diet Selected 🌱";
+            proteinHTML = `
+                <li><strong>Edamame/Roasted Soybeans:</strong> ~17g protein per cup. Zero prep.</li>
+                <li><strong>Tofu Scramble:</strong> Crumbled firm tofu cooks fast and packs ~20g protein.</li>
+                <li><strong>Plant-Based Protein Shake:</strong> Pea or soy isolate mixed with unsweetened almond milk.</li>
+                <li><strong>Lentil Pasta:</strong> Takes 10 mins to boil, massive protein upgrade over regular pasta.</li>
+            `;
+        } else if (diet === 'vegetarian') {
+            document.getElementById('dietDisplay').innerText = "Vegetarian Diet Selected 🧀";
+            proteinHTML = `
+                <li><strong>Greek Yogurt (0% or 2%):</strong> ~15-20g protein per cup.</li>
+                <li><strong>Cottage Cheese:</strong> ~25g protein per cup. Great with berries.</li>
+                <li><strong>Eggs:</strong> 3 eggs + 1/2 cup egg whites = ~25g protein fast.</li>
+                <li><strong>Edamame:</strong> Easy microwaveable protein hit.</li>
+            `;
+        } else if (diet === 'gf') {
+            document.getElementById('dietDisplay').innerText = "Gluten-Free Diet Selected 🌾";
+            proteinHTML = `
+                <li><strong>Greek Yogurt or Cottage Cheese:</strong> Quick dairy protein.</li>
+                <li><strong>Eggs or Pre-cooked Chicken:</strong> Fast and naturally GF.</li>
+                <li><strong>Canned Tuna/Salmon:</strong> ~20g protein per can.</li>
+                <li><strong>GF Protein Shake:</strong> Check labels carefully for certified GF whey or plant protein.</li>
+            `;
+            fatHTML = `
+                <li><strong>Almonds/Walnuts:</strong> Quick fats to keep you full.</li>
+                <li><strong>Avocado:</strong> On GF toast or rice cakes.</li>
+                <li><strong>Chia Seeds:</strong> Great for fiber.</li>
+            `;
+        } else {
+            document.getElementById('dietDisplay').innerText = "Standard Diet Selected 🥩";
+            proteinHTML = `
+                <li><strong>Greek Yogurt/Cottage Cheese:</strong> ~20g protein per cup.</li>
+                <li><strong>Canned Tuna/Salmon:</strong> ~20g protein per can.</li>
+                <li><strong>Eggs/Pre-cooked Chicken:</strong> Fast 5-minute prep.</li>
+                <li><strong>Whey Protein Shake:</strong> The ultimate fast protein delivery.</li>
+            `;
+        }
+
+        pList.innerHTML = proteinHTML;
+        fList.innerHTML = fatHTML;
+        document.getElementById('nutritionModal').classList.remove('hidden'); 
+    }
+    
+    function hideNutritionModal() { document.getElementById('nutritionModal').classList.add('hidden'); }
+
+    function updateHistoryTable() {
+        const history = JSON.parse(localStorage.getItem('fastHistory') || "[]");
+        const body = document.getElementById('historyBody');
+        body.innerHTML = history.length ? "" : "<tr><td colspan='3' style='text-align:center'>No logs yet</td></tr>";
+        history.forEach(log => body.innerHTML += `<tr><td>${log.date}</td><td>${log.start}</td><td>${log.duration}</td></tr>`);
+    }
+
+    function clearHistory() {
+        if(confirm("Are you sure you want to delete all fasting history?")) {
+            localStorage.removeItem('fastHistory');
+            updateHistoryTable();
+            calculateStreak();
+        }
+    }
+
+    function exportToCSV() {
+        const history = JSON.parse(localStorage.getItem('fastHistory') || "[]");
+        if (history.length === 0) {
+            alert("There is no history to export yet!");
+            return;
+        }
+
+        let csvContent = "Date,Time Started,Duration\n";
+        history.forEach(log => {
+            csvContent += `"${log.date}","${log.start}","${log.duration}"\n`;
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "glowfast_history.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    if (localStorage.getItem('fastProfile')) {
+        showTracker();
+        document.getElementById('bottomNav').style.display = "flex";
+    } else {
+        document.getElementById('bottomNav').style.display = "none";
+    }
+</script>
+</body>
+</html>
