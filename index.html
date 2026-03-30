@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlowFast - Thematic</title>
+    <title>GlowFast - Fast & Fuel</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'><path d='M18 2C9.163 2 2 9.163 2 18s7.163 16 16 16c8.082 0 14.77-5.992 15.844-13.804a11.968 11.968 0 0 1-10.354-15.04A15.937 15.937 0 0 0 18 2z' fill='%236366f1'/><path d='M22 12c-1.5 0-3 2-3 4.5 0-2-1.5-3.5-3-3.5-1.5 0-3 2-3 4.5C13 22 18 24 18 24s5-2 5-6.5c0-2.5-1.5-4.5-1-5.5z' fill='%23f59e0b'/></svg>">
+    
     <style>
         /* LIGHT MODE (Default) */
         :root { 
-            --primary: #6366f1; /* Slightly darker indigo for better contrast on light */
+            --primary: #6366f1; 
             --accent: #f59e0b; 
             --pink: #ec4899; 
             --success: #10b981; 
@@ -25,7 +27,7 @@
             --overlay: rgba(255, 255, 255, 0.95);
         }
 
-        /* DARK MODE (Automatically triggers if your phone is in dark mode) */
+        /* DARK MODE */
         @media (prefers-color-scheme: dark) {
             :root { 
                 --primary: #818cf8; 
@@ -47,8 +49,8 @@
             }
         }
 
-        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 0; margin: 0; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
-        .app-container { background: var(--card); width: 100%; max-width: 440px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; display: flex; flex-direction: column; height: 100vh; max-height: 850px; transition: background-color 0.3s; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 0; margin: 0; min-height: 100vh; transition: 0.3s; }
+        .app-container { background: var(--card); width: 100%; max-width: 440px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; display: flex; flex-direction: column; height: 100vh; max-height: 850px; transition: 0.3s; }
         .content-area { padding: 2rem; overflow-y: auto; flex-grow: 1; padding-bottom: 80px; }
         .hidden { display: none !important; }
         
@@ -68,21 +70,34 @@
         .btn-success { background: var(--success); color: white; }
         .btn-danger { background: var(--warning); color: white; }
         .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-muted); margin-top: 10px; }
-        .btn-sos { background: transparent; color: var(--text-muted); text-decoration: underline; font-size: 0.8rem; padding: 10px; margin-top: 5px; }
 
         .bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0; z-index: 10; transition: 0.3s; }
-        .nav-item { background: transparent; color: var(--text-muted); padding: 10px; border-radius: 8px; width: 45%; font-size: 0.9rem; }
+        .nav-item { background: transparent; color: var(--text-muted); padding: 10px; border-radius: 8px; width: 30%; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .nav-item.active { background: var(--input-bg); color: var(--primary); border: 1px solid var(--border); }
 
         .header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
         .greeting { font-size: 1.2rem; font-weight: 600; color: var(--primary); }
         .streak-badge { background: rgba(251, 191, 36, 0.1); color: var(--accent); padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; border: 1px solid var(--accent); }
         
+        /* Logo Styles */
+        .brand-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+        .logo-svg { width: 32px; height: 32px; flex-shrink: 0; }
+        .app-title { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin: 0; }
+        .tab-title { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin: 0; }
+        
         .timer-display { font-size: 3.5rem; font-weight: 800; text-align: center; margin: 10px 0; font-variant-numeric: tabular-nums; position: relative; }
         .timer-label { text-align: center; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: center; align-items: center; gap: 8px; }
         .edit-time-btn { background: var(--border); color: var(--text); border: none; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.7rem; padding: 0; }
 
-        .water-card { background: var(--input-bg); border-radius: 12px; padding: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); transition: 0.3s; }
+        .cal-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; }
+        .cal-number { font-size: 3rem; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+        .cal-progress-bg { width: 100%; height: 12px; background: var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 25px; }
+        .cal-progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.5s ease; }
+        .food-item-row { display: flex; justify-content: space-between; padding: 12px; background: var(--input-bg); border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border); font-size: 0.9rem; }
+        .food-item-row strong { color: var(--primary); }
+        .del-food-btn { background: transparent; color: var(--warning); border: none; padding: 0 5px; cursor: pointer; width: auto; font-size: 1rem; }
+
+        .water-card { background: var(--input-bg); border-radius: 12px; padding: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
         .water-drops { display: flex; gap: 5px; font-size: 1.2rem; cursor: pointer; }
         .drop { opacity: 0.2; transition: 0.3s; filter: grayscale(100%); }
         .drop.filled { opacity: 1; filter: grayscale(0%); text-shadow: 0 0 5px var(--water); }
@@ -91,35 +106,40 @@
         .stage { padding: 15px; border-radius: 12px; background: var(--stage-bg); opacity: 0.5; border-left: 4px solid transparent; transition: 0.4s ease; line-height: 1.4; border: 1px solid transparent; }
         .stage.active { opacity: 1; border-left-color: var(--accent); background: var(--stage-active); transform: scale(1.02); box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border); border-left: 4px solid var(--accent); }
         .stage.complete { opacity: 0.7; border-left-color: var(--success); }
-        .stage-title { font-weight: bold; font-size: 0.85rem; display: block; color: var(--accent); margin-bottom: 5px; letter-spacing: 0.5px; }
+        .stage-title { font-weight: bold; font-size: 0.85rem; display: block; color: var(--accent); margin-bottom: 5px; }
         .stage-desc { font-size: 0.8rem; color: var(--text-muted); }
 
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; color: var(--text); }
         th { text-align: left; padding: 12px 10px; border-bottom: 2px solid var(--border); color: var(--primary); }
         td { padding: 12px 10px; border-bottom: 1px solid var(--border); }
 
-        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; box-sizing: border-box; z-index: 20; text-align: center; backdrop-filter: blur(5px); overflow-y: auto; transition: 0.3s; }
-        .modal-overlay h2 { margin-top: 0; }
-        .modal-overlay p { font-size: 0.9rem; line-height: 1.5; color: var(--text); margin-bottom: 20px; }
-        .guideline-box { background: var(--card); border-left: 4px solid var(--accent); border-right: 1px solid var(--border); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 15px; font-size: 0.85rem; width: 100%; box-sizing: border-box; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-
-        .food-list { margin: 10px 0 0 0; padding-left: 20px; color: var(--text-muted); }
-        .food-list li { margin-bottom: 8px; }
-        .food-list strong { color: var(--text); }
+        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; box-sizing: border-box; z-index: 20; text-align: center; backdrop-filter: blur(5px); overflow-y: auto; }
+        .guideline-box { background: var(--card); border-left: 4px solid var(--accent); border: 1px solid var(--border); border-left-width: 4px; padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 15px; font-size: 0.85rem; width: 100%; box-sizing: border-box; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
 
         .eating-ui { background: rgba(16, 185, 129, 0.05); border: 1px solid var(--success); padding: 15px; border-radius: 12px; margin-top: 15px; text-align: center; }
-        .retro-box { margin-top: 15px; padding: 15px; background: var(--input-bg); border-radius: 12px; border: 1px dashed var(--success); text-align: left; }
     </style>
 </head>
 <body>
+
+<svg style="display: none;">
+    <symbol id="glowfast-logo" viewBox="0 0 36 36">
+        <path d="M18 2C9.163 2 2 9.163 2 18s7.163 16 16 16c8.082 0 14.77-5.992 15.844-13.804a11.968 11.968 0 0 1-10.354-15.04A15.937 15.937 0 0 0 18 2z" fill="var(--primary)"/>
+        <path d="M22 12c-1.5 0-3 2-3 4.5 0-2-1.5-3.5-3-3.5-1.5 0-3 2-3 4.5C13 22 18 24 18 24s5-2 5-6.5c0-2.5-1.5-4.5-1-5.5z" fill="var(--accent)"/>
+    </symbol>
+</svg>
 
 <div class="app-container">
     <div class="content-area">
         
         <div id="profileScreen">
-            <h2 style="color: var(--primary);">Your Profile</h2>
+            <div class="brand-header">
+                <svg class="logo-svg"><use href="#glowfast-logo"></use></svg>
+                <h1 class="app-title">GlowFast</h1>
+            </div>
+            
             <label style="color: var(--text-muted); font-size: 0.85rem;">Name</label>
-            <input type="text" id="userName">
+            <input type="text" id="userName" placeholder="Your name">
+            
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <div><label style="color: var(--text-muted); font-size: 0.85rem;">Age</label><input type="number" id="age"></div>
                 <div><label style="color: var(--text-muted); font-size: 0.85rem;">Gender</label>
@@ -132,7 +152,7 @@
             
             <label style="color: var(--text-muted); font-size: 0.85rem;">Dietary Preference</label>
             <select id="dietPref">
-                <option value="any">No Restrictions (Omnivore)</option>
+                <option value="any">No Restrictions</option>
                 <option value="vegetarian">Vegetarian</option>
                 <option value="vegan">Vegan</option>
                 <option value="gf">Gluten-Free</option>
@@ -144,18 +164,26 @@
                     <label class="switch"><input type="checkbox" id="lutealToggle"><span class="slider"></span></label>
                 </div>
             </div>
+            
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <div><label style="color: var(--text-muted); font-size: 0.85rem;">Weight (kg)</label><input type="number" id="weight"></div>
                 <div><label style="color: var(--text-muted); font-size: 0.85rem;">Height (cm)</label><input type="number" id="height"></div>
             </div>
+            
+            <label style="color: var(--text-muted); font-size: 0.85rem;">Daily Calorie Goal</label>
+            <input type="number" id="calorieGoalInput" placeholder="e.g. 2000">
+
             <button class="btn-primary" onclick="saveProfile()" style="margin-top: 10px;">Save Profile</button>
         </div>
 
         <div id="trackerScreen" class="hidden">
             <div class="header-row">
-                <div>
-                    <div class="greeting" id="displayGreeting">Hello!</div>
-                    <div id="planBadge" style="font-size: 0.75rem; color: var(--accent); font-weight: bold; margin-top: 2px;"></div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <svg class="logo-svg"><use href="#glowfast-logo"></use></svg>
+                    <div>
+                        <div class="greeting" id="displayGreeting">Hello!</div>
+                        <div id="planBadge" style="font-size: 0.75rem; color: var(--accent); font-weight: bold; margin-top: 2px;"></div>
+                    </div>
                 </div>
                 <div style="text-align: right;">
                     <div class="streak-badge" id="streakBadge">🔥 0 Days</div>
@@ -190,137 +218,181 @@
 
             <div id="fastingControls" class="hidden">
                 <button class="btn-danger" onclick="confirmEndFast()">End Fast & Eat</button>
-                <button class="btn-sos" onclick="showSOS()">Struggling? Click here.</button>
-                
-                <h3 style="font-size: 0.9rem; color: var(--primary); margin-top: 25px; margin-bottom: 5px;">Inside Your Body:</h3>
                 <div class="roadmap">
                     <div class="stage" id="stg1">
                         <span class="stage-title">0-4H: ANABOLIC (DIGESTION)</span>
-                        <span class="stage-desc">Insulin levels are high. Excess is shuttled into your liver and muscles as glycogen. Fat burning is completely locked.</span>
+                        <span class="stage-desc">Insulin levels high. Glucose stored as glycogen.</span>
                     </div>
                     <div class="stage" id="stg2">
                         <span class="stage-title">4-12H: CATABOLIC (THE SWITCH)</span>
-                        <span class="stage-desc">Insulin drops. The body breaks down stored liver glycogen to keep blood sugar stable. Lipolysis begins.</span>
+                        <span class="stage-desc">Liver glycogen depletes to stabilize blood sugar.</span>
                     </div>
                     <div class="stage" id="stg3">
                         <span class="stage-title">12-16H: KETOSIS (FAT BURNING)</span>
-                        <span class="stage-desc">Liver glycogen is depleted. Your body makes a major metabolic shift, converting fat cells into ketones for fuel.</span>
+                        <span class="stage-desc">Major shift: body burns fat cells for fuel.</span>
                     </div>
                     <div class="stage" id="stg4">
-                        <span class="stage-title">16H+: AUTOPHAGY & REPAIR</span>
-                        <span class="stage-desc">Deep cellular cleanup. Growth Hormone (HGH) spikes to protect muscle mass while inflammation drops.</span>
+                        <span class="stage-title">16H+: AUTOPHAGY</span>
+                        <span class="stage-desc">Cellular cleanup. HGH spikes to protect muscle.</span>
                     </div>
                 </div>
             </div>
 
             <div id="eatingControls" class="hidden eating-ui">
                 <p style="margin-top: 0; font-weight: bold; color: var(--success); font-size: 0.9rem;">Feasting Window Active</p>
-                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">Prioritize protein and healthy fats.</p>
-                <button class="btn-outline" style="border-color: var(--success); color: var(--success); margin-bottom: 10px; background: transparent;" onclick="showNutritionModal()">💡 Quick Meal Ideas</button>
+                <button class="btn-outline" style="border-color: var(--success); color: var(--success); margin-bottom: 10px; background: transparent;" onclick="document.getElementById('nutritionModal').classList.remove('hidden')">💡 Quick Meal Ideas</button>
                 <button class="btn-success" onclick="endEatingStartFast()">Close Kitchen & Start Fast</button>
-                
-                <div class="retro-box">
-                    <label style="font-size: 0.75rem; color: var(--text-muted);">Finished eating earlier? Backdate your fast:</label>
+                <div style="margin-top: 15px; padding: 15px; background: var(--input-bg); border-radius: 12px; border: 1px dashed var(--success); text-align: left;">
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Finished eating earlier? Backdate fast:</label>
                     <input type="datetime-local" id="retroEatTime" style="border-color: var(--success); margin-bottom: 5px;">
                     <button class="btn-outline" style="border-color: var(--success); color: var(--success); padding: 10px; background: transparent;" onclick="manualStart('retroEatTime')">Catch Up Timer</button>
                 </div>
             </div>
         </div>
 
+        <div id="calorieScreen" class="hidden">
+            <div class="brand-header">
+                <svg class="logo-svg"><use href="#glowfast-logo"></use></svg>
+                <h2 class="tab-title">Fuel Tracker</h2>
+            </div>
+            
+            <div class="cal-header">
+                <div><span class="cal-number" id="calRemaining">0</span><span style="color: var(--text-muted); font-size: 0.9rem; margin-left: 5px;">kcal left</span></div>
+            </div>
+            <div class="cal-progress-bg"><div class="cal-progress-fill" id="calProgressFill"></div></div>
+
+            <div style="display: flex; gap: 10px; align-items: stretch; margin-bottom: 20px;">
+                <div style="flex-grow: 1;">
+                    <input type="text" id="foodInput" list="foodSuggestions" placeholder="Food (e.g., Avocado)" style="margin-bottom: 5px;" oninput="checkFoodDB()">
+                    <datalist id="foodSuggestions"></datalist>
+                    <input type="number" id="calInput" placeholder="Calories (e.g., 250)" style="margin-bottom: 0;">
+                </div>
+                <button class="btn-primary" style="width: 80px; padding: 0; margin-top: 8px; margin-bottom: 0;" onclick="addCalorie()">Add</button>
+            </div>
+
+            <h3 style="font-size: 0.9rem; color: var(--text-muted); border-bottom: 1px solid var(--border); padding-bottom: 5px;">Today's Log</h3>
+            <div id="foodLogContainer"></div>
+        </div>
+
         <div id="historyScreen" class="hidden">
-            <h2 style="margin-top: 0; color: var(--primary);">Your Fasting Log</h2>
-            <p style="font-size: 0.85rem; color: var(--text-muted);">Track your consistency and gym progress.</p>
+            <div class="brand-header">
+                <svg class="logo-svg"><use href="#glowfast-logo"></use></svg>
+                <h2 class="tab-title">Your Log</h2>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Track your consistency.</p>
             <table id="historyTable">
                 <thead><tr><th>Date</th><th>Started</th><th>Duration</th></tr></thead>
                 <tbody id="historyBody"></tbody>
             </table>
-            
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button class="btn-primary" onclick="exportToCSV()">Export to CSV</button>
-                <button class="btn-outline" style="border-color: var(--warning); color: var(--warning); margin-top: 0;" onclick="clearHistory()">Clear History</button>
+                <button class="btn-outline" style="border-color: var(--warning); color: var(--warning); margin-top: 0;" onclick="clearHistory()">Clear Data</button>
             </div>
         </div>
 
     </div>
 
     <div class="bottom-nav" id="bottomNav" class="hidden">
-        <button class="nav-item active" id="navTracker" onclick="switchTab('tracker')">⏱️ Tracker</button>
-        <button class="nav-item" id="navHistory" onclick="switchTab('history')">📋 History</button>
+        <button class="nav-item active" id="navTracker" onclick="switchTab('tracker')">
+            <span style="font-size: 1.2rem;">⏱️</span> Tracker
+        </button>
+        <button class="nav-item" id="navCalories" onclick="switchTab('calories')">
+            <span style="font-size: 1.2rem;">🍎</span> Fuel
+        </button>
+        <button class="nav-item" id="navHistory" onclick="switchTab('history')">
+            <span style="font-size: 1.2rem;">📋</span> Log
+        </button>
     </div>
 
     <div id="editTimeModal" class="modal-overlay hidden">
         <h2 style="color: var(--primary);">Edit Start Time</h2>
-        <p>Adjust when your fast actually started to fix your timer.</p>
         <div class="guideline-box" style="border-left-color: var(--primary);">
             <input type="datetime-local" id="editManualTime" style="margin-bottom: 0;">
         </div>
-        <button class="btn-primary" onclick="saveEditedTime()">Save Changes</button>
-        <button class="btn-outline" style="border:none;" onclick="hideEditTimeModal()">Cancel</button>
-    </div>
-
-    <div id="sosModal" class="modal-overlay hidden">
-        <h2 style="color: var(--accent);">Let's Check In</h2>
-        <div class="guideline-box" style="border-left-color: var(--water);">
-            <strong style="color: var(--water);">"I'm just really hungry / craving."</strong><br>
-            <span style="font-size: 0.8rem; color: var(--text-muted);">This is a Ghrelin wave. It passes in 20 minutes. Drink water and wait.</span>
-            <button class="btn-outline" style="color: var(--text); border-color: var(--water);" onclick="hideSOS()">I'll drink water.</button>
-        </div>
-        <div class="guideline-box" style="border-left-color: var(--warning);">
-            <strong style="color: var(--warning);">"I'm dizzy or very weak."</strong><br>
-            <span style="font-size: 0.8rem; color: var(--text-muted);">This is Hypoglycemia. Break the fast safely now.</span>
-            <button class="btn-danger" style="margin-top: 10px;" onclick="hideSOS(); confirmEndFast();">Break my fast.</button>
-        </div>
-        <button class="btn-sos" onclick="hideSOS()">Close</button>
+        <button class="btn-primary" onclick="saveEditedTime()">Save</button>
+        <button class="btn-outline" style="border:none;" onclick="document.getElementById('editTimeModal').classList.add('hidden')">Cancel</button>
     </div>
 
     <div id="breakFastModal" class="modal-overlay hidden">
         <h2 style="color: var(--success);">🎉 Fast Completed!</h2>
         <div class="guideline-box" style="border-left-color: var(--success);">
-            <strong>1. Hydrate First:</strong> Drink a large glass of water.<br><br>
-            <strong>2. Protein Opener:</strong> Break the fast with protein and fats.<br><br>
-            <strong>3. The 30-Min Rule:</strong> Wait 30 mins before eating heavy carbs.
+            <strong>1. Hydrate First:</strong> Drink water.<br><br>
+            <strong>2. Protein Opener:</strong> Break fast with protein/fats.<br><br>
+            <strong>3. 30-Min Rule:</strong> Wait before eating heavy carbs.
         </div>
-        <button class="btn-success" onclick="startEatingWindow()">Start Eating Window</button>
+        <button class="btn-success" onclick="startEatingWindow()">Start Feasting Window</button>
     </div>
 
     <div id="nutritionModal" class="modal-overlay hidden">
         <h2 style="color: var(--success); margin-bottom: 5px;">Feasting Cheat Sheet</h2>
-        <p style="margin-top: 0; font-size: 0.8rem; color: var(--text-muted);" id="dietDisplay">Tailored to your preferences.</p>
-        <div class="guideline-box" style="border-left-color: var(--water);">
-            <strong style="color: var(--water); font-size: 0.95rem;">⚡ Quick Protein Options</strong>
+        <div class="guideline-box" style="border-left-color: #38bdf8;">
+            <strong style="color: #38bdf8;">⚡ Quick Protein Options</strong>
             <ul class="food-list" id="proteinList"></ul>
         </div>
         <div class="guideline-box" style="border-left-color: var(--success);">
-            <strong style="color: var(--success); font-size: 0.95rem;">🥑 Quick Healthy Fats</strong>
+            <strong style="color: var(--success);">🥑 Quick Healthy Fats</strong>
             <ul class="food-list" id="fatList"></ul>
         </div>
-        <button class="btn-success" onclick="hideNutritionModal()">Got it!</button>
+        <button class="btn-success" onclick="document.getElementById('nutritionModal').classList.add('hidden')">Got it!</button>
     </div>
-
 </div>
 
 <script>
     let globalTimer;
 
-    function toggleCycleView() {
-        const isFemale = document.getElementById('gender').value === 'female';
-        document.getElementById('cycleView').classList.toggle('hidden', !isFemale);
+    // --- MINI SMART DATABASE ---
+    const foodDatabase = {
+        "Almonds (1oz / 28g)": 164, "Apple (1 medium)": 95, "Avocado (1 medium)": 240,
+        "Avocado (Half)": 120, "Banana (1 medium)": 105, "Broccoli (1 cup)": 55,
+        "Brown Rice (1 cup cooked)": 215, "Chicken Breast (4oz / 115g)": 165,
+        "Cottage Cheese (1 cup)": 220, "Egg (1 large)": 70, "Egg Whites (1 cup)": 125,
+        "Greek Yogurt (1 cup)": 100, "Oats (1/2 cup dry)": 150, "Olive Oil (1 tbsp)": 119,
+        "Peanut Butter (2 tbsp)": 190, "Salmon (4oz / 115g)": 235, "Sweet Potato (1 medium)": 112,
+        "Whey Protein (1 scoop)": 120, "White Rice (1 cup cooked)": 205
+    };
+
+    function initFoodDB() {
+        const dataList = document.getElementById('foodSuggestions');
+        for (let food in foodDatabase) {
+            let option = document.createElement('option');
+            option.value = food;
+            dataList.appendChild(option);
+        }
     }
 
+    function checkFoodDB() {
+        const inputVal = document.getElementById('foodInput').value;
+        if (foodDatabase[inputVal]) document.getElementById('calInput').value = foodDatabase[inputVal];
+    }
+
+    // --- NAVIGATION ---
     function switchTab(tab) {
         document.getElementById('trackerScreen').classList.add('hidden');
+        document.getElementById('calorieScreen').classList.add('hidden');
         document.getElementById('historyScreen').classList.add('hidden');
+        
         document.getElementById('navTracker').classList.remove('active');
+        document.getElementById('navCalories').classList.remove('active');
         document.getElementById('navHistory').classList.remove('active');
 
         if(tab === 'tracker') {
             document.getElementById('trackerScreen').classList.remove('hidden');
             document.getElementById('navTracker').classList.add('active');
+        } else if (tab === 'calories') {
+            document.getElementById('calorieScreen').classList.remove('hidden');
+            document.getElementById('navCalories').classList.add('active');
+            updateCalorieUI();
         } else {
             document.getElementById('historyScreen').classList.remove('hidden');
             document.getElementById('navHistory').classList.add('active');
             updateHistoryTable();
         }
+    }
+
+    // --- PROFILE ---
+    function toggleCycleView() {
+        const isFemale = document.getElementById('gender').value === 'female';
+        document.getElementById('cycleView').classList.toggle('hidden', !isFemale);
     }
 
     function saveProfile() {
@@ -331,6 +403,7 @@
             diet: document.getElementById('dietPref').value,
             weight: document.getElementById('weight').value,
             height: document.getElementById('height').value,
+            calorieGoal: document.getElementById('calorieGoalInput').value || 2000,
             isLuteal: document.getElementById('lutealToggle').checked
         };
         if(!p.age || !p.weight) return alert("Please fill in age and weight.");
@@ -345,21 +418,19 @@
         document.getElementById('trackerScreen').classList.remove('hidden');
         document.getElementById('bottomNav').style.display = "flex";
         
-        document.getElementById('displayGreeting').innerText = `Keep it up, ${p.name}!`;
+        document.getElementById('displayGreeting').innerText = `Hello, ${p.name}!`;
         document.getElementById('planBadge').innerText = `${p.fastGoal}:${p.eatGoal} CYCLE PLAN` + (p.isLuteal ? " (LUTEAL)" : "");
         
-        setLocalTimeInputs();
-        checkDailyWaterReset();
-        calculateStreak();
-        checkActiveState();
-    }
-
-    function setLocalTimeInputs() {
         const now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         const timeString = now.toISOString().slice(0,16);
         document.getElementById('manualTime').value = timeString;
         document.getElementById('retroEatTime').value = timeString;
+
+        populateNutritionModal(p.diet || 'any');
+        checkDailyWaterReset();
+        calculateStreak();
+        checkActiveState();
     }
 
     function editProfile() {
@@ -370,15 +441,18 @@
         document.getElementById('dietPref').value = p.diet || 'any';
         document.getElementById('weight').value = p.weight;
         document.getElementById('height').value = p.height;
+        document.getElementById('calorieGoalInput').value = p.calorieGoal || 2000;
         document.getElementById('lutealToggle').checked = p.isLuteal;
         toggleCycleView();
         
         document.getElementById('profileScreen').classList.remove('hidden');
         document.getElementById('trackerScreen').classList.add('hidden');
+        document.getElementById('calorieScreen').classList.add('hidden');
         document.getElementById('historyScreen').classList.add('hidden');
         document.getElementById('bottomNav').style.display = "none";
     }
 
+    // --- TRACKER LOGIC ---
     function startFast() { 
         localStorage.setItem('fastStartTime', new Date().getTime()); 
         localStorage.removeItem('eatStartTime');
@@ -393,32 +467,6 @@
         localStorage.setItem('fastStartTime', startTime);
         localStorage.removeItem('eatStartTime');
         checkActiveState();
-    }
-    
-    function openEditTimeModal() {
-        const currentStart = parseInt(localStorage.getItem('fastStartTime'));
-        if(!currentStart) return;
-        
-        const d = new Date(currentStart);
-        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-        document.getElementById('editManualTime').value = d.toISOString().slice(0,16);
-        
-        document.getElementById('editTimeModal').classList.remove('hidden');
-    }
-
-    function hideEditTimeModal() {
-        document.getElementById('editTimeModal').classList.add('hidden');
-    }
-
-    function saveEditedTime() {
-        const val = document.getElementById('editManualTime').value;
-        if(!val) return;
-        const newTime = new Date(val).getTime();
-        if(newTime > new Date().getTime()) return alert("No future dates allowed!");
-        
-        localStorage.setItem('fastStartTime', newTime);
-        document.getElementById('editTimeModal').classList.add('hidden');
-        updateFastingTimer();
     }
     
     function confirmEndFast() { 
@@ -471,7 +519,6 @@
             document.getElementById('eatingControls').classList.remove('hidden');
             document.getElementById('labelText').innerText = "EATING WINDOW REMAINING";
             document.getElementById('timer').style.color = "var(--success)";
-            setLocalTimeInputs(); 
             updateEatingTimer();
             globalTimer = setInterval(updateEatingTimer, 1000);
         } else {
@@ -515,22 +562,114 @@
         document.getElementById('timer').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
     }
 
+    function openEditTimeModal() {
+        const currentStart = parseInt(localStorage.getItem('fastStartTime'));
+        if(!currentStart) return;
+        const d = new Date(currentStart);
+        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+        document.getElementById('editManualTime').value = d.toISOString().slice(0,16);
+        document.getElementById('editTimeModal').classList.remove('hidden');
+    }
+
+    function saveEditedTime() {
+        const val = document.getElementById('editManualTime').value;
+        if(!val) return;
+        const newTime = new Date(val).getTime();
+        if(newTime > new Date().getTime()) return alert("No future dates allowed!");
+        localStorage.setItem('fastStartTime', newTime);
+        document.getElementById('editTimeModal').classList.add('hidden');
+        updateFastingTimer();
+    }
+
+    // --- CALORIES ---
+    function updateCalorieUI() {
+        const today = new Date().toLocaleDateString();
+        if(localStorage.getItem('calDate') !== today) {
+            localStorage.setItem('calDate', today);
+            localStorage.setItem('calLog', "[]");
+        }
+
+        const p = JSON.parse(localStorage.getItem('fastProfile') || "{}");
+        const goal = parseInt(p.calorieGoal || 2000);
+        const log = JSON.parse(localStorage.getItem('calLog') || "[]");
+        
+        const totalEaten = log.reduce((sum, item) => sum + parseInt(item.cals), 0);
+        const remaining = goal - totalEaten;
+
+        const calRemEl = document.getElementById('calRemaining');
+        calRemEl.innerText = remaining;
+        calRemEl.style.color = remaining < 0 ? "var(--warning)" : "var(--text)";
+
+        const percent = Math.min((totalEaten / goal) * 100, 100);
+        const fill = document.getElementById('calProgressFill');
+        fill.style.width = percent + "%";
+        fill.style.background = remaining < 0 ? "var(--warning)" : "var(--primary)";
+
+        const listEl = document.getElementById('foodLogContainer');
+        listEl.innerHTML = log.length === 0 ? "<p style='color: var(--text-muted); font-size: 0.85rem;'>No food logged today.</p>" : "";
+        
+        log.forEach((item, index) => {
+            listEl.innerHTML += `
+                <div class="food-item-row">
+                    <span><strong>${item.name}</strong></span>
+                    <span>${item.cals} kcal <button class="del-food-btn" onclick="deleteCalorie(${index})">×</button></span>
+                </div>
+            `;
+        });
+    }
+
+    function addCalorie() {
+        const name = document.getElementById('foodInput').value;
+        const cals = document.getElementById('calInput').value;
+        if(!name || !cals) return alert("Please enter food and calories.");
+
+        const log = JSON.parse(localStorage.getItem('calLog') || "[]");
+        log.unshift({ name, cals });
+        localStorage.setItem('calLog', JSON.stringify(log));
+        
+        document.getElementById('foodInput').value = "";
+        document.getElementById('calInput').value = "";
+        updateCalorieUI();
+    }
+
+    function deleteCalorie(index) {
+        const log = JSON.parse(localStorage.getItem('calLog') || "[]");
+        log.splice(index, 1);
+        localStorage.setItem('calLog', JSON.stringify(log));
+        updateCalorieUI();
+    }
+
+    // --- DYNAMIC DIET SHEET ---
+    function populateNutritionModal(diet) {
+        const pList = document.getElementById('proteinList');
+        const fList = document.getElementById('fatList');
+        let proteinHTML = '';
+        let fatHTML = `
+            <li><strong>Handful of Nuts/Seeds:</strong> Almonds, walnuts, or pumpkin seeds.</li>
+            <li><strong>Avocado:</strong> Great on rice cakes or alongside your protein.</li>
+            <li><strong>Chia Seeds:</strong> Toss 2 tablespoons into a shake for 10g fiber.</li>
+        `;
+
+        if (diet === 'vegan') {
+            proteinHTML = `<li><strong>Edamame:</strong> ~17g protein per cup.</li><li><strong>Tofu Scramble:</strong> ~20g protein.</li><li><strong>Plant-Based Shake:</strong> Pea or soy isolate.</li><li><strong>Lentil Pasta:</strong> Massive protein upgrade.</li>`;
+        } else if (diet === 'vegetarian') {
+            proteinHTML = `<li><strong>Greek Yogurt:</strong> ~15-20g protein.</li><li><strong>Cottage Cheese:</strong> ~25g protein.</li><li><strong>Eggs:</strong> 3 eggs + whites = ~25g protein.</li><li><strong>Edamame:</strong> Easy microwave hit.</li>`;
+        } else if (diet === 'gf') {
+            proteinHTML = `<li><strong>Greek Yogurt:</strong> Quick dairy protein.</li><li><strong>Eggs/Chicken:</strong> Fast and naturally GF.</li><li><strong>Canned Tuna:</strong> ~20g protein.</li><li><strong>GF Protein Shake:</strong> Check labels carefully.</li>`;
+        } else {
+            proteinHTML = `<li><strong>Greek Yogurt:</strong> ~20g protein per cup.</li><li><strong>Canned Tuna/Salmon:</strong> ~20g protein per can.</li><li><strong>Eggs/Chicken:</strong> Fast 5-minute prep.</li><li><strong>Whey Shake:</strong> Ultimate fast protein.</li>`;
+        }
+        pList.innerHTML = proteinHTML;
+        fList.innerHTML = fatHTML;
+    }
+
+    // --- WATER & STREAK ---
     function checkDailyWaterReset() {
         const today = new Date().toLocaleDateString();
-        const savedDate = localStorage.getItem('waterDate');
-        if(savedDate !== today) {
+        if(localStorage.getItem('waterDate') !== today) {
             localStorage.setItem('waterDate', today);
             localStorage.setItem('waterCount', 0);
         }
-        updateWaterUI();
-    }
-    function addWater(index) {
-        let count = parseInt(localStorage.getItem('waterCount') || 0);
-        if(count >= index) count = index - 1; else count = index;
-        localStorage.setItem('waterCount', count);
-        updateWaterUI();
-    }
-    function updateWaterUI() {
         const count = parseInt(localStorage.getItem('waterCount') || 0);
         const drops = document.getElementById('waterContainer').children;
         for(let i=0; i<8; i++) {
@@ -538,90 +677,54 @@
             else drops[i].classList.remove('filled');
         }
     }
+    
+    function addWater(index) {
+        let count = parseInt(localStorage.getItem('waterCount') || 0);
+        count = (count >= index) ? index - 1 : index;
+        localStorage.setItem('waterCount', count);
+        checkDailyWaterReset();
+    }
 
     function calculateStreak() {
         const history = JSON.parse(localStorage.getItem('fastHistory') || "[]");
-        if(history.length === 0) { document.getElementById('streakBadge').innerText = "🔥 0 Days"; return; }
-        let streak = 0; let currentDate = new Date(); currentDate.setHours(0,0,0,0);
-        const latestLogDate = new Date(history[0].date); latestLogDate.setHours(0,0,0,0);
-        const diffDays = Math.floor((currentDate - latestLogDate) / (1000 * 60 * 60 * 24));
-        if(diffDays > 1) { document.getElementById('streakBadge').innerText = "🔥 0 Days"; return; }
+        if(history.length === 0) { 
+            document.getElementById('streakBadge').innerText = "🔥 0 Days"; 
+            return; 
+        }
 
-        let checkDate = latestLogDate;
-        for(let i=0; i<history.length; i++) {
-            const logDate = new Date(history[i].date); logDate.setHours(0,0,0,0);
-            if(logDate.getTime() === checkDate.getTime()) { streak++; checkDate.setDate(checkDate.getDate() - 1); } 
-            else if (logDate.getTime() > checkDate.getTime()) { continue; } else { break; }
+        const uniqueDates = [...new Set(history.map(h => h.date))];
+        let streak = 0;
+        let checkDate = new Date();
+        const todayStr = checkDate.toLocaleDateString();
+        checkDate.setDate(checkDate.getDate() - 1);
+        const yesterdayStr = checkDate.toLocaleDateString();
+
+        let targetDate = new Date();
+        if (uniqueDates.includes(todayStr)) {
+            // ok
+        } else if (uniqueDates.includes(yesterdayStr)) {
+            targetDate.setDate(targetDate.getDate() - 1);
+        } else {
+            document.getElementById('streakBadge').innerText = "🔥 0 Days"; 
+            return;
+        }
+
+        while(true) {
+            if(uniqueDates.includes(targetDate.toLocaleDateString())) {
+                streak++;
+                targetDate.setDate(targetDate.getDate() - 1);
+            } else {
+                break;
+            }
         }
         document.getElementById('streakBadge').innerText = `🔥 ${streak} Day${streak !== 1 ? 's' : ''}`;
     }
 
-    function showSOS() { document.getElementById('sosModal').classList.remove('hidden'); }
-    function hideSOS() { document.getElementById('sosModal').classList.add('hidden'); }
-    
-    function showNutritionModal() { 
-        const p = JSON.parse(localStorage.getItem('fastProfile'));
-        const diet = p.diet || 'any';
-        const pList = document.getElementById('proteinList');
-        const fList = document.getElementById('fatList');
-        
-        let proteinHTML = '';
-        let fatHTML = `
-            <li><strong>Handful of Nuts/Seeds:</strong> Almonds, walnuts, or pumpkin seeds.</li>
-            <li><strong>Avocado:</strong> Half an avocado on rice cakes or alongside your protein.</li>
-            <li><strong>Chia/Flax Seeds:</strong> Toss 2 tablespoons into a shake for 10g of fiber.</li>
-        `;
-
-        if (diet === 'vegan') {
-            document.getElementById('dietDisplay').innerText = "Plant-Based (Vegan) Diet Selected 🌱";
-            proteinHTML = `
-                <li><strong>Edamame/Roasted Soybeans:</strong> ~17g protein per cup. Zero prep.</li>
-                <li><strong>Tofu Scramble:</strong> Crumbled firm tofu cooks fast and packs ~20g protein.</li>
-                <li><strong>Plant-Based Protein Shake:</strong> Pea or soy isolate mixed with unsweetened almond milk.</li>
-                <li><strong>Lentil Pasta:</strong> Takes 10 mins to boil, massive protein upgrade over regular pasta.</li>
-            `;
-        } else if (diet === 'vegetarian') {
-            document.getElementById('dietDisplay').innerText = "Vegetarian Diet Selected 🧀";
-            proteinHTML = `
-                <li><strong>Greek Yogurt (0% or 2%):</strong> ~15-20g protein per cup.</li>
-                <li><strong>Cottage Cheese:</strong> ~25g protein per cup. Great with berries.</li>
-                <li><strong>Eggs:</strong> 3 eggs + 1/2 cup egg whites = ~25g protein fast.</li>
-                <li><strong>Edamame:</strong> Easy microwaveable protein hit.</li>
-            `;
-        } else if (diet === 'gf') {
-            document.getElementById('dietDisplay').innerText = "Gluten-Free Diet Selected 🌾";
-            proteinHTML = `
-                <li><strong>Greek Yogurt or Cottage Cheese:</strong> Quick dairy protein.</li>
-                <li><strong>Eggs or Pre-cooked Chicken:</strong> Fast and naturally GF.</li>
-                <li><strong>Canned Tuna/Salmon:</strong> ~20g protein per can.</li>
-                <li><strong>GF Protein Shake:</strong> Check labels carefully for certified GF whey or plant protein.</li>
-            `;
-            fatHTML = `
-                <li><strong>Almonds/Walnuts:</strong> Quick fats to keep you full.</li>
-                <li><strong>Avocado:</strong> On GF toast or rice cakes.</li>
-                <li><strong>Chia Seeds:</strong> Great for fiber.</li>
-            `;
-        } else {
-            document.getElementById('dietDisplay').innerText = "Standard Diet Selected 🥩";
-            proteinHTML = `
-                <li><strong>Greek Yogurt/Cottage Cheese:</strong> ~20g protein per cup.</li>
-                <li><strong>Canned Tuna/Salmon:</strong> ~20g protein per can.</li>
-                <li><strong>Eggs/Pre-cooked Chicken:</strong> Fast 5-minute prep.</li>
-                <li><strong>Whey Protein Shake:</strong> The ultimate fast protein delivery.</li>
-            `;
-        }
-
-        pList.innerHTML = proteinHTML;
-        fList.innerHTML = fatHTML;
-        document.getElementById('nutritionModal').classList.remove('hidden'); 
-    }
-    
-    function hideNutritionModal() { document.getElementById('nutritionModal').classList.add('hidden'); }
-
+    // --- HISTORY & DATA ---
     function updateHistoryTable() {
         const history = JSON.parse(localStorage.getItem('fastHistory') || "[]");
         const body = document.getElementById('historyBody');
-        body.innerHTML = history.length ? "" : "<tr><td colspan='3' style='text-align:center'>No logs yet</td></tr>";
+        body.innerHTML = history.length ? "" : "<tr><td colspan='3' style='text-align:center; color:var(--text-muted);'>No logs yet</td></tr>";
         history.forEach(log => body.innerHTML += `<tr><td>${log.date}</td><td>${log.start}</td><td>${log.duration}</td></tr>`);
     }
 
@@ -635,29 +738,24 @@
 
     function exportToCSV() {
         const history = JSON.parse(localStorage.getItem('fastHistory') || "[]");
-        if (history.length === 0) {
-            alert("There is no history to export yet!");
-            return;
-        }
+        if (history.length === 0) return alert("There is no history to export yet!");
 
         let csvContent = "Date,Time Started,Duration\n";
-        history.forEach(log => {
-            csvContent += `"${log.date}","${log.start}","${log.duration}"\n`;
-        });
+        history.forEach(log => { csvContent += `"${log.date}","${log.start}","${log.duration}"\n`; });
 
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
-        link.setAttribute("href", url);
-        link.setAttribute("download", "glowfast_history.csv");
+        link.href = URL.createObjectURL(blob);
+        link.download = "glowfast_history.csv";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     }
 
+    // Initialize App & Food Database
+    initFoodDB();
     if (localStorage.getItem('fastProfile')) {
         showTracker();
-        document.getElementById('bottomNav').style.display = "flex";
     } else {
         document.getElementById('bottomNav').style.display = "none";
     }
