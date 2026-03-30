@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GlowFast - Fast & Fuel</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'><path d='M18 2C9.163 2 2 9.163 2 18s7.163 16 16 16c8.082 0 14.77-5.992 15.844-13.804a11.968 11.968 0 0 1-10.354-15.04A15.937 15.937 0 0 0 18 2z' fill='%236366f1'/><path d='M22 12c-1.5 0-3 2-3 4.5 0-2-1.5-3.5-3-3.5-1.5 0-3 2-3 4.5C13 22 18 24 18 24s5-2 5-6.5c0-2.5-1.5-4.5-1-5.5z' fill='%23f59e0b'/></svg>">
-    
     <style>
         /* LIGHT MODE (Default) */
         :root { 
@@ -79,7 +77,6 @@
         .greeting { font-size: 1.2rem; font-weight: 600; color: var(--primary); }
         .streak-badge { background: rgba(251, 191, 36, 0.1); color: var(--accent); padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; border: 1px solid var(--accent); }
         
-        /* Logo Styles */
         .brand-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
         .logo-svg { width: 32px; height: 32px; flex-shrink: 0; }
         .app-title { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin: 0; }
@@ -93,8 +90,16 @@
         .cal-number { font-size: 3rem; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
         .cal-progress-bg { width: 100%; height: 12px; background: var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 25px; }
         .cal-progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.5s ease; }
+        
+        /* Multi-Add Area - Updated for Qty */
+        .meal-builder { background: var(--input-bg); border-radius: 12px; border: 1px solid var(--border); padding: 15px; margin-bottom: 20px; }
+        .multi-add-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+        .del-row-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem; padding: 0 5px; width: auto; transition: 0.2s; }
+        .del-row-btn:hover { color: var(--warning); }
+
         .food-item-row { display: flex; justify-content: space-between; padding: 12px; background: var(--input-bg); border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border); font-size: 0.9rem; }
         .food-item-row strong { color: var(--primary); }
+        .food-item-row span.qty-badge { font-size: 0.75rem; background: var(--border); color: var(--text-muted); padding: 2px 6px; border-radius: 4px; margin-right: 6px; }
         .del-food-btn { background: transparent; color: var(--warning); border: none; padding: 0 5px; cursor: pointer; width: auto; font-size: 1rem; }
 
         .water-card { background: var(--input-bg); border-radius: 12px; padding: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
@@ -116,7 +121,12 @@
         .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; box-sizing: border-box; z-index: 20; text-align: center; backdrop-filter: blur(5px); overflow-y: auto; }
         .guideline-box { background: var(--card); border-left: 4px solid var(--accent); border: 1px solid var(--border); border-left-width: 4px; padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 15px; font-size: 0.85rem; width: 100%; box-sizing: border-box; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
 
+        .food-list { margin: 10px 0 0 0; padding-left: 20px; color: var(--text-muted); }
+        .food-list li { margin-bottom: 8px; }
+        .food-list strong { color: var(--text); }
+
         .eating-ui { background: rgba(16, 185, 129, 0.05); border: 1px solid var(--success); padding: 15px; border-radius: 12px; margin-top: 15px; text-align: center; }
+        .retro-box { margin-top: 15px; padding: 15px; background: var(--input-bg); border-radius: 12px; border: 1px dashed var(--success); text-align: left; }
     </style>
 </head>
 <body>
@@ -242,7 +252,7 @@
                 <p style="margin-top: 0; font-weight: bold; color: var(--success); font-size: 0.9rem;">Feasting Window Active</p>
                 <button class="btn-outline" style="border-color: var(--success); color: var(--success); margin-bottom: 10px; background: transparent;" onclick="document.getElementById('nutritionModal').classList.remove('hidden')">💡 Quick Meal Ideas</button>
                 <button class="btn-success" onclick="endEatingStartFast()">Close Kitchen & Start Fast</button>
-                <div style="margin-top: 15px; padding: 15px; background: var(--input-bg); border-radius: 12px; border: 1px dashed var(--success); text-align: left;">
+                <div class="retro-box">
                     <label style="font-size: 0.75rem; color: var(--text-muted);">Finished eating earlier? Backdate fast:</label>
                     <input type="datetime-local" id="retroEatTime" style="border-color: var(--success); margin-bottom: 5px;">
                     <button class="btn-outline" style="border-color: var(--success); color: var(--success); padding: 10px; background: transparent;" onclick="manualStart('retroEatTime')">Catch Up Timer</button>
@@ -261,13 +271,24 @@
             </div>
             <div class="cal-progress-bg"><div class="cal-progress-fill" id="calProgressFill"></div></div>
 
-            <div style="display: flex; gap: 10px; align-items: stretch; margin-bottom: 20px;">
-                <div style="flex-grow: 1;">
-                    <input type="text" id="foodInput" list="foodSuggestions" placeholder="Food (e.g., Avocado)" style="margin-bottom: 5px;" oninput="checkFoodDB()">
-                    <datalist id="foodSuggestions"></datalist>
-                    <input type="number" id="calInput" placeholder="Calories (e.g., 250)" style="margin-bottom: 0;">
+            <div class="meal-builder">
+                <h3 style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 5px;">Meal Builder</h3>
+                <datalist id="foodSuggestions"></datalist>
+                
+                <div id="multiAddContainer">
+                    <div class="multi-add-row">
+                        <input type="text" class="food-input" list="foodSuggestions" placeholder="Food (e.g., Egg)" style="margin-bottom: 0; flex-grow: 1;" oninput="handleFoodInput(this)">
+                        <input type="number" class="qty-input" placeholder="Qty" value="1" min="0.1" step="any" style="margin-bottom: 0; width: 55px;" oninput="handleQtyInput(this)" title="Quantity">
+                        <input type="number" class="cal-input" placeholder="kcal" style="margin-bottom: 0; width: 75px;" title="Total Calories">
+                        <input type="hidden" class="base-cal-input">
+                        <button class="del-row-btn" onclick="removeEntryRow(this)">×</button>
+                    </div>
                 </div>
-                <button class="btn-primary" style="width: 80px; padding: 0; margin-top: 8px; margin-bottom: 0;" onclick="addCalorie()">Add</button>
+
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button class="btn-outline" style="margin-top: 0; padding: 10px;" onclick="addEntryRow()">+ Add Row</button>
+                    <button class="btn-primary" style="margin-top: 0; padding: 10px;" onclick="saveAllEntries()">Log Meal</button>
+                </div>
             </div>
 
             <h3 style="font-size: 0.9rem; color: var(--text-muted); border-bottom: 1px solid var(--border); padding-bottom: 5px;">Today's Log</h3>
@@ -340,7 +361,7 @@
 <script>
     let globalTimer;
 
-    // --- MINI SMART DATABASE ---
+    // --- MINI SMART DATABASE (With Multiplier Support) ---
     const foodDatabase = {
         "Almonds (1oz / 28g)": 164, "Apple (1 medium)": 95, "Avocado (1 medium)": 240,
         "Avocado (Half)": 120, "Banana (1 medium)": 105, "Broccoli (1 cup)": 55,
@@ -360,9 +381,31 @@
         }
     }
 
-    function checkFoodDB() {
-        const inputVal = document.getElementById('foodInput').value;
-        if (foodDatabase[inputVal]) document.getElementById('calInput').value = foodDatabase[inputVal];
+    // Handles picking a food and setting the base calories
+    function handleFoodInput(inputEl) {
+        const inputVal = inputEl.value;
+        const row = inputEl.parentElement;
+        
+        if (foodDatabase[inputVal]) {
+            const baseCals = foodDatabase[inputVal];
+            row.querySelector('.base-cal-input').value = baseCals; // Remember base
+            
+            const qty = parseFloat(row.querySelector('.qty-input').value) || 1;
+            row.querySelector('.cal-input').value = Math.round(baseCals * qty);
+        }
+    }
+
+    // Handles changing the multiplier quantity
+    function handleQtyInput(qtyEl) {
+        const row = qtyEl.parentElement;
+        const baseCalsStr = row.querySelector('.base-cal-input').value;
+        
+        // Only auto-calculate if they picked a food from the DB (has base calories)
+        if (baseCalsStr) {
+            const baseCals = parseFloat(baseCalsStr);
+            const qty = parseFloat(qtyEl.value) || 0;
+            row.querySelector('.cal-input').value = Math.round(baseCals * qty);
+        }
     }
 
     // --- NAVIGATION ---
@@ -469,6 +512,25 @@
         checkActiveState();
     }
     
+    function openEditTimeModal() {
+        const currentStart = parseInt(localStorage.getItem('fastStartTime'));
+        if(!currentStart) return;
+        const d = new Date(currentStart);
+        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+        document.getElementById('editManualTime').value = d.toISOString().slice(0,16);
+        document.getElementById('editTimeModal').classList.remove('hidden');
+    }
+
+    function saveEditedTime() {
+        const val = document.getElementById('editManualTime').value;
+        if(!val) return;
+        const newTime = new Date(val).getTime();
+        if(newTime > new Date().getTime()) return alert("No future dates allowed!");
+        localStorage.setItem('fastStartTime', newTime);
+        document.getElementById('editTimeModal').classList.add('hidden');
+        updateFastingTimer();
+    }
+    
     function confirmEndFast() { 
         if(confirm("Ready to break your fast?")) {
             const startStr = localStorage.getItem('fastStartTime');
@@ -562,26 +624,68 @@
         document.getElementById('timer').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
     }
 
-    function openEditTimeModal() {
-        const currentStart = parseInt(localStorage.getItem('fastStartTime'));
-        if(!currentStart) return;
-        const d = new Date(currentStart);
-        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-        document.getElementById('editManualTime').value = d.toISOString().slice(0,16);
-        document.getElementById('editTimeModal').classList.remove('hidden');
+    // --- MULTI-ADD CALORIE BUILDER ---
+    function addEntryRow() {
+        const container = document.getElementById('multiAddContainer');
+        const row = document.createElement('div');
+        row.className = 'multi-add-row';
+        row.innerHTML = `
+            <input type="text" class="food-input" list="foodSuggestions" placeholder="Food item" style="margin-bottom: 0; flex-grow: 1;" oninput="handleFoodInput(this)">
+            <input type="number" class="qty-input" placeholder="Qty" value="1" min="0.1" step="any" style="margin-bottom: 0; width: 55px;" oninput="handleQtyInput(this)" title="Quantity">
+            <input type="number" class="cal-input" placeholder="kcal" style="margin-bottom: 0; width: 75px;" title="Total Calories">
+            <input type="hidden" class="base-cal-input">
+            <button class="del-row-btn" onclick="removeEntryRow(this)">×</button>
+        `;
+        container.appendChild(row);
     }
 
-    function saveEditedTime() {
-        const val = document.getElementById('editManualTime').value;
-        if(!val) return;
-        const newTime = new Date(val).getTime();
-        if(newTime > new Date().getTime()) return alert("No future dates allowed!");
-        localStorage.setItem('fastStartTime', newTime);
-        document.getElementById('editTimeModal').classList.add('hidden');
-        updateFastingTimer();
+    function removeEntryRow(btn) {
+        const row = btn.parentElement;
+        if(document.querySelectorAll('.multi-add-row').length > 1) {
+            row.remove();
+        } else {
+            row.querySelector('.food-input').value = "";
+            row.querySelector('.qty-input').value = "1";
+            row.querySelector('.cal-input').value = "";
+            row.querySelector('.base-cal-input').value = "";
+        }
     }
 
-    // --- CALORIES ---
+    function saveAllEntries() {
+        const rows = document.querySelectorAll('.multi-add-row');
+        const log = JSON.parse(localStorage.getItem('calLog') || "[]");
+        let addedCount = 0;
+
+        rows.forEach(row => {
+            const name = row.querySelector('.food-input').value.trim();
+            const qty = parseFloat(row.querySelector('.qty-input').value) || 1;
+            const cals = row.querySelector('.cal-input').value;
+            
+            if (name && cals) {
+                // If they used a multiplier > 1, show it in the log name so they know why calories are higher
+                const displayName = (qty !== 1) ? `${name} (x${qty})` : name;
+                log.unshift({ name: displayName, cals });
+                addedCount++;
+            }
+        });
+
+        if (addedCount === 0) return alert("Please enter at least one food and its calories.");
+
+        localStorage.setItem('calLog', JSON.stringify(log));
+        
+        // Reset Builder to 1 empty row
+        document.getElementById('multiAddContainer').innerHTML = `
+            <div class="multi-add-row">
+                <input type="text" class="food-input" list="foodSuggestions" placeholder="Food (e.g., Egg)" style="margin-bottom: 0; flex-grow: 1;" oninput="handleFoodInput(this)">
+                <input type="number" class="qty-input" placeholder="Qty" value="1" min="0.1" step="any" style="margin-bottom: 0; width: 55px;" oninput="handleQtyInput(this)" title="Quantity">
+                <input type="number" class="cal-input" placeholder="kcal" style="margin-bottom: 0; width: 75px;" title="Total Calories">
+                <input type="hidden" class="base-cal-input">
+                <button class="del-row-btn" onclick="removeEntryRow(this)">×</button>
+            </div>
+        `;
+        updateCalorieUI();
+    }
+
     function updateCalorieUI() {
         const today = new Date().toLocaleDateString();
         if(localStorage.getItem('calDate') !== today) {
@@ -616,20 +720,6 @@
                 </div>
             `;
         });
-    }
-
-    function addCalorie() {
-        const name = document.getElementById('foodInput').value;
-        const cals = document.getElementById('calInput').value;
-        if(!name || !cals) return alert("Please enter food and calories.");
-
-        const log = JSON.parse(localStorage.getItem('calLog') || "[]");
-        log.unshift({ name, cals });
-        localStorage.setItem('calLog', JSON.stringify(log));
-        
-        document.getElementById('foodInput').value = "";
-        document.getElementById('calInput').value = "";
-        updateCalorieUI();
     }
 
     function deleteCalorie(index) {
