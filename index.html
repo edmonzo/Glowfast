@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GlowFast - Fast & Fuel</title>
     <style>
-        /* LIGHT MODE (Default) */
+        /* LIGHT MODE */
         :root { 
             --primary: #6366f1; 
             --accent: #f59e0b; 
@@ -13,6 +13,7 @@
             --success: #10b981; 
             --warning: #f43f5e; 
             --water: #0ea5e9; 
+            --monk: #8b5cf6; /* Special color for Monk Mode */
             
             --bg: #f1f5f9; 
             --card: #ffffff; 
@@ -34,6 +35,7 @@
                 --success: #10b981; 
                 --warning: #f43f5e; 
                 --water: #38bdf8; 
+                --monk: #a78bfa;
                 
                 --bg: #0f172a; 
                 --card: #1e293b; 
@@ -91,7 +93,7 @@
         .cal-progress-bg { width: 100%; height: 12px; background: var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 25px; }
         .cal-progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.5s ease; }
         
-        /* Multi-Add Area - Updated for Qty */
+        /* Multi-Add Area */
         .meal-builder { background: var(--input-bg); border-radius: 12px; border: 1px solid var(--border); padding: 15px; margin-bottom: 20px; }
         .multi-add-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
         .del-row-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem; padding: 0 5px; width: auto; transition: 0.2s; }
@@ -99,7 +101,6 @@
 
         .food-item-row { display: flex; justify-content: space-between; padding: 12px; background: var(--input-bg); border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border); font-size: 0.9rem; }
         .food-item-row strong { color: var(--primary); }
-        .food-item-row span.qty-badge { font-size: 0.75rem; background: var(--border); color: var(--text-muted); padding: 2px 6px; border-radius: 4px; margin-right: 6px; }
         .del-food-btn { background: transparent; color: var(--warning); border: none; padding: 0 5px; cursor: pointer; width: auto; font-size: 1rem; }
 
         .water-card { background: var(--input-bg); border-radius: 12px; padding: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
@@ -114,16 +115,16 @@
         .stage-title { font-weight: bold; font-size: 0.85rem; display: block; color: var(--accent); margin-bottom: 5px; }
         .stage-desc { font-size: 0.8rem; color: var(--text-muted); }
 
+        /* Monk Mode Colors */
+        .stage.active.monk-active { border-left-color: var(--monk); }
+        .monk-text { color: var(--monk) !important; }
+
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; color: var(--text); }
         th { text-align: left; padding: 12px 10px; border-bottom: 2px solid var(--border); color: var(--primary); }
         td { padding: 12px 10px; border-bottom: 1px solid var(--border); }
 
         .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; box-sizing: border-box; z-index: 20; text-align: center; backdrop-filter: blur(5px); overflow-y: auto; }
         .guideline-box { background: var(--card); border-left: 4px solid var(--accent); border: 1px solid var(--border); border-left-width: 4px; padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 15px; font-size: 0.85rem; width: 100%; box-sizing: border-box; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-
-        .food-list { margin: 10px 0 0 0; padding-left: 20px; color: var(--text-muted); }
-        .food-list li { margin-bottom: 8px; }
-        .food-list strong { color: var(--text); }
 
         .eating-ui { background: rgba(16, 185, 129, 0.05); border: 1px solid var(--success); padding: 15px; border-radius: 12px; margin-top: 15px; text-align: center; }
         .retro-box { margin-top: 15px; padding: 15px; background: var(--input-bg); border-radius: 12px; border: 1px dashed var(--success); text-align: left; }
@@ -158,6 +159,23 @@
                         <option value="female">Female</option>
                     </select>
                 </div>
+            </div>
+
+            <label style="color: var(--text-muted); font-size: 0.85rem; margin-top: 10px; display: block;">Fasting Style</label>
+            <select id="fastType" onchange="toggleMonkView()" style="border-color: var(--monk);">
+                <option value="daily">Daily Intermittent (14-18h)</option>
+                <option value="monk">Monk Mode (24h+ Extended)</option>
+            </select>
+
+            <div id="monkView" class="hidden">
+                <label style="color: var(--monk); font-size: 0.85rem;">Extended Fast Goal</label>
+                <select id="monkGoal" style="border-color: var(--monk); background: rgba(139, 92, 246, 0.05);">
+                    <option value="24">24 Hours (OMAD / Reset)</option>
+                    <option value="36">36 Hours (Deep Fat Burn)</option>
+                    <option value="48">48 Hours (Max HGH)</option>
+                    <option value="72">72 Hours (Immune Reset)</option>
+                </select>
+                <p style="font-size: 0.75rem; color: var(--warning); margin-top: -5px; margin-bottom: 15px;">*Extended fasts require adequate electrolytes (sodium/potassium) and medical clearance.</p>
             </div>
             
             <label style="color: var(--text-muted); font-size: 0.85rem;">Dietary Preference</label>
@@ -242,8 +260,21 @@
                         <span class="stage-desc">Major shift: body burns fat cells for fuel.</span>
                     </div>
                     <div class="stage" id="stg4">
-                        <span class="stage-title">16H+: AUTOPHAGY</span>
-                        <span class="stage-desc">Cellular cleanup. HGH spikes to protect muscle.</span>
+                        <span class="stage-title" id="stg4-title">16H+: AUTOPHAGY</span>
+                        <span class="stage-desc" id="stg4-desc">Cellular cleanup. HGH spikes to protect muscle.</span>
+                    </div>
+                    
+                    <div class="stage monk-only hidden" id="stg5">
+                        <span class="stage-title monk-text">24-36H: PEAK AUTOPHAGY & BDNF</span>
+                        <span class="stage-desc">Cellular recycling in overdrive. Brain-Derived Neurotrophic Factor (BDNF) spikes for extreme mental clarity.</span>
+                    </div>
+                    <div class="stage monk-only hidden" id="stg6">
+                        <span class="stage-title monk-text">36-48H: DEEP KETOSIS & HGH</span>
+                        <span class="stage-desc">Running on pure fat. Human Growth Hormone (HGH) surges up to 500% to protect muscle mass.</span>
+                    </div>
+                    <div class="stage monk-only hidden" id="stg7">
+                        <span class="stage-title monk-text">48-72H+: IMMUNE RESET</span>
+                        <span class="stage-desc">Old white blood cells break down. The body prepares stem cells to generate a new, resilient immune system.</span>
                     </div>
                 </div>
             </div>
@@ -339,7 +370,7 @@
         <div class="guideline-box" style="border-left-color: var(--success);">
             <strong>1. Hydrate First:</strong> Drink water.<br><br>
             <strong>2. Protein Opener:</strong> Break fast with protein/fats.<br><br>
-            <strong>3. 30-Min Rule:</strong> Wait before eating heavy carbs.
+            <strong>3. Pace Yourself:</strong> The longer the fast, the slower you reintroduce carbs.
         </div>
         <button class="btn-success" onclick="startEatingWindow()">Start Feasting Window</button>
     </div>
@@ -361,7 +392,7 @@
 <script>
     let globalTimer;
 
-    // --- MINI SMART DATABASE (With Multiplier Support) ---
+    // --- MINI SMART DATABASE ---
     const foodDatabase = {
         "Almonds (1oz / 28g)": 164, "Apple (1 medium)": 95, "Avocado (1 medium)": 240,
         "Avocado (Half)": 120, "Banana (1 medium)": 105, "Broccoli (1 cup)": 55,
@@ -381,26 +412,20 @@
         }
     }
 
-    // Handles picking a food and setting the base calories
     function handleFoodInput(inputEl) {
         const inputVal = inputEl.value;
         const row = inputEl.parentElement;
-        
         if (foodDatabase[inputVal]) {
             const baseCals = foodDatabase[inputVal];
-            row.querySelector('.base-cal-input').value = baseCals; // Remember base
-            
+            row.querySelector('.base-cal-input').value = baseCals; 
             const qty = parseFloat(row.querySelector('.qty-input').value) || 1;
             row.querySelector('.cal-input').value = Math.round(baseCals * qty);
         }
     }
 
-    // Handles changing the multiplier quantity
     function handleQtyInput(qtyEl) {
         const row = qtyEl.parentElement;
         const baseCalsStr = row.querySelector('.base-cal-input').value;
-        
-        // Only auto-calculate if they picked a food from the DB (has base calories)
         if (baseCalsStr) {
             const baseCals = parseFloat(baseCalsStr);
             const qty = parseFloat(qtyEl.value) || 0;
@@ -413,7 +438,6 @@
         document.getElementById('trackerScreen').classList.add('hidden');
         document.getElementById('calorieScreen').classList.add('hidden');
         document.getElementById('historyScreen').classList.add('hidden');
-        
         document.getElementById('navTracker').classList.remove('active');
         document.getElementById('navCalories').classList.remove('active');
         document.getElementById('navHistory').classList.remove('active');
@@ -438,6 +462,11 @@
         document.getElementById('cycleView').classList.toggle('hidden', !isFemale);
     }
 
+    function toggleMonkView() {
+        const isMonk = document.getElementById('fastType').value === 'monk';
+        document.getElementById('monkView').classList.toggle('hidden', !isMonk);
+    }
+
     function saveProfile() {
         const p = {
             name: document.getElementById('userName').value || "Friend",
@@ -447,11 +476,23 @@
             weight: document.getElementById('weight').value,
             height: document.getElementById('height').value,
             calorieGoal: document.getElementById('calorieGoalInput').value || 2000,
-            isLuteal: document.getElementById('lutealToggle').checked
+            isLuteal: document.getElementById('lutealToggle').checked,
+            isMonkMode: document.getElementById('fastType').value === 'monk'
         };
         if(!p.age || !p.weight) return alert("Please fill in age and weight.");
-        let fastGoal = (p.gender === 'female' && p.isLuteal) ? 13 : (p.weight / ((p.height/100)**2) > 28 ? 18 : 16);
-        localStorage.setItem('fastProfile', JSON.stringify({...p, fastGoal, eatGoal: 24 - fastGoal}));
+        
+        let fastGoal;
+        let eatGoal;
+
+        if (p.isMonkMode) {
+            fastGoal = parseInt(document.getElementById('monkGoal').value);
+            eatGoal = 12; // Hardcode a safe 12h refeed window for extended fasts
+        } else {
+            fastGoal = (p.gender === 'female' && p.isLuteal) ? 13 : (p.weight / ((p.height/100)**2) > 28 ? 18 : 16);
+            eatGoal = 24 - fastGoal;
+        }
+
+        localStorage.setItem('fastProfile', JSON.stringify({...p, fastGoal, eatGoal}));
         showTracker();
     }
 
@@ -462,7 +503,21 @@
         document.getElementById('bottomNav').style.display = "flex";
         
         document.getElementById('displayGreeting').innerText = `Hello, ${p.name}!`;
-        document.getElementById('planBadge').innerText = `${p.fastGoal}:${p.eatGoal} CYCLE PLAN` + (p.isLuteal ? " (LUTEAL)" : "");
+        
+        // Update Badge and Roadmap based on Monk Mode
+        if (p.isMonkMode) {
+            document.getElementById('planBadge').innerText = `🔥 ${p.fastGoal}H MONK MODE`;
+            document.getElementById('planBadge').style.color = "var(--monk)";
+            document.querySelectorAll('.monk-only').forEach(el => el.classList.remove('hidden'));
+            document.getElementById('stg4-title').innerText = "16-24H: EARLY AUTOPHAGY";
+            document.getElementById('stg4-desc').innerText = "Cellular cleanup begins. Growth hormone starts rising.";
+        } else {
+            document.getElementById('planBadge').innerText = `${p.fastGoal}:${p.eatGoal} CYCLE PLAN` + (p.isLuteal ? " (LUTEAL)" : "");
+            document.getElementById('planBadge').style.color = "var(--accent)";
+            document.querySelectorAll('.monk-only').forEach(el => el.classList.add('hidden'));
+            document.getElementById('stg4-title').innerText = "16H+: AUTOPHAGY";
+            document.getElementById('stg4-desc').innerText = "Cellular cleanup. HGH spikes to protect muscle.";
+        }
         
         const now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -486,7 +541,12 @@
         document.getElementById('height').value = p.height;
         document.getElementById('calorieGoalInput').value = p.calorieGoal || 2000;
         document.getElementById('lutealToggle').checked = p.isLuteal;
+        
+        document.getElementById('fastType').value = p.isMonkMode ? 'monk' : 'daily';
+        if (p.isMonkMode) document.getElementById('monkGoal').value = p.fastGoal;
+        
         toggleCycleView();
+        toggleMonkView();
         
         document.getElementById('profileScreen').classList.remove('hidden');
         document.getElementById('trackerScreen').classList.add('hidden');
@@ -599,11 +659,24 @@
         const h = Math.floor(hours), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
         document.getElementById('timer').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
         
-        document.querySelectorAll('.stage').forEach(st => st.classList.remove('active', 'complete'));
+        const p = JSON.parse(localStorage.getItem('fastProfile') || "{}");
+        const isMonk = p.isMonkMode;
+
+        document.querySelectorAll('.stage').forEach(st => { st.classList.remove('active', 'complete'); st.classList.remove('monk-active'); });
+        
         if (hours < 4) document.getElementById('stg1').classList.add('active');
         else if (hours < 12) { document.getElementById('stg1').classList.add('complete'); document.getElementById('stg2').classList.add('active'); }
         else if (hours < 16) { document.getElementById('stg1').classList.add('complete'); document.getElementById('stg2').classList.add('complete'); document.getElementById('stg3').classList.add('active'); }
-        else { document.getElementById('stg1').classList.add('complete'); document.getElementById('stg2').classList.add('complete'); document.getElementById('stg3').classList.add('complete'); document.getElementById('stg4').classList.add('active'); }
+        else if (!isMonk || hours < 24) { 
+            document.getElementById('stg1').classList.add('complete'); document.getElementById('stg2').classList.add('complete'); document.getElementById('stg3').classList.add('complete'); 
+            document.getElementById('stg4').classList.add('active'); 
+        }
+        else if (isMonk) {
+            document.getElementById('stg1').classList.add('complete'); document.getElementById('stg2').classList.add('complete'); document.getElementById('stg3').classList.add('complete'); document.getElementById('stg4').classList.add('complete');
+            if (hours < 36) { document.getElementById('stg5').classList.add('active', 'monk-active'); }
+            else if (hours < 48) { document.getElementById('stg5').classList.add('complete'); document.getElementById('stg6').classList.add('active', 'monk-active'); }
+            else { document.getElementById('stg5').classList.add('complete'); document.getElementById('stg6').classList.add('complete'); document.getElementById('stg7').classList.add('active', 'monk-active'); }
+        }
     }
 
     function updateEatingTimer() {
@@ -662,7 +735,6 @@
             const cals = row.querySelector('.cal-input').value;
             
             if (name && cals) {
-                // If they used a multiplier > 1, show it in the log name so they know why calories are higher
                 const displayName = (qty !== 1) ? `${name} (x${qty})` : name;
                 log.unshift({ name: displayName, cals });
                 addedCount++;
@@ -673,7 +745,6 @@
 
         localStorage.setItem('calLog', JSON.stringify(log));
         
-        // Reset Builder to 1 empty row
         document.getElementById('multiAddContainer').innerHTML = `
             <div class="multi-add-row">
                 <input type="text" class="food-input" list="foodSuggestions" placeholder="Food (e.g., Egg)" style="margin-bottom: 0; flex-grow: 1;" oninput="handleFoodInput(this)">
@@ -842,7 +913,7 @@
         document.body.removeChild(link);
     }
 
-    // Initialize App & Food Database
+    // Initialize
     initFoodDB();
     if (localStorage.getItem('fastProfile')) {
         showTracker();
