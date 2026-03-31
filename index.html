@@ -13,7 +13,7 @@
             --success: #10b981; 
             --warning: #f43f5e; 
             --water: #0ea5e9; 
-            --monk: #8b5cf6; /* Special color for Monk Mode */
+            --monk: #8b5cf6; 
             
             --bg: #f1f5f9; 
             --card: #ffffff; 
@@ -50,7 +50,7 @@
         }
 
         body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 0; margin: 0; min-height: 100vh; transition: 0.3s; }
-        .app-container { background: var(--card); width: 100%; max-width: 440px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; display: flex; flex-direction: column; height: 100vh; max-height: 850px; transition: 0.3s; }
+        .app-container { background: var(--card); width: 100%; max-width: 440px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; display: flex; flex-direction: column; height: 100vh; max-height: 850px; transition: 0.3s; overflow-x: hidden; }
         .content-area { padding: 2rem; overflow-y: auto; flex-grow: 1; padding-bottom: 80px; }
         .hidden { display: none !important; }
         
@@ -93,7 +93,6 @@
         .cal-progress-bg { width: 100%; height: 12px; background: var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 25px; }
         .cal-progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.5s ease; }
         
-        /* Multi-Add Area */
         .meal-builder { background: var(--input-bg); border-radius: 12px; border: 1px solid var(--border); padding: 15px; margin-bottom: 20px; }
         .multi-add-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
         .del-row-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem; padding: 0 5px; width: auto; transition: 0.2s; }
@@ -107,6 +106,7 @@
         .water-drops { display: flex; gap: 5px; font-size: 1.2rem; cursor: pointer; }
         .drop { opacity: 0.2; transition: 0.3s; filter: grayscale(100%); }
         .drop.filled { opacity: 1; filter: grayscale(0%); text-shadow: 0 0 5px var(--water); }
+        .water-bell-btn { background: transparent; border: none; padding: 0; margin-top: 5px; font-size: 0.7rem; color: var(--text-muted); cursor: pointer; text-align: left; }
 
         .roadmap { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
         .stage { padding: 15px; border-radius: 12px; background: var(--stage-bg); opacity: 0.5; border-left: 4px solid transparent; transition: 0.4s ease; line-height: 1.4; border: 1px solid transparent; }
@@ -115,7 +115,6 @@
         .stage-title { font-weight: bold; font-size: 0.85rem; display: block; color: var(--accent); margin-bottom: 5px; }
         .stage-desc { font-size: 0.8rem; color: var(--text-muted); }
 
-        /* Monk Mode Colors */
         .stage.active.monk-active { border-left-color: var(--monk); }
         .monk-text { color: var(--monk) !important; }
 
@@ -126,8 +125,16 @@
         .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; box-sizing: border-box; z-index: 20; text-align: center; backdrop-filter: blur(5px); overflow-y: auto; }
         .guideline-box { background: var(--card); border-left: 4px solid var(--accent); border: 1px solid var(--border); border-left-width: 4px; padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 15px; font-size: 0.85rem; width: 100%; box-sizing: border-box; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
 
+        .food-list { margin: 10px 0 0 0; padding-left: 20px; color: var(--text-muted); }
+        .food-list li { margin-bottom: 8px; }
+        .food-list strong { color: var(--text); }
+
         .eating-ui { background: rgba(16, 185, 129, 0.05); border: 1px solid var(--success); padding: 15px; border-radius: 12px; margin-top: 15px; text-align: center; }
         .retro-box { margin-top: 15px; padding: 15px; background: var(--input-bg); border-radius: 12px; border: 1px dashed var(--success); text-align: left; }
+
+        /* IN-APP TOAST NOTIFICATION */
+        .toast { position: absolute; top: -100px; left: 50%; transform: translateX(-50%); background: var(--water); color: white; padding: 12px 24px; border-radius: 30px; font-weight: bold; font-size: 0.9rem; box-shadow: 0 10px 25px rgba(0,0,0,0.3); transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 100; white-space: nowrap; }
+        .toast.show { top: 20px; }
     </style>
 </head>
 <body>
@@ -140,6 +147,9 @@
 </svg>
 
 <div class="app-container">
+    
+    <div id="toast" class="toast">💧 Time to hydrate!</div>
+
     <div class="content-area">
         
         <div id="profileScreen">
@@ -175,7 +185,7 @@
                     <option value="48">48 Hours (Max HGH)</option>
                     <option value="72">72 Hours (Immune Reset)</option>
                 </select>
-                <p style="font-size: 0.75rem; color: var(--warning); margin-top: -5px; margin-bottom: 15px;">*Extended fasts require adequate electrolytes (sodium/potassium) and medical clearance.</p>
+                <p style="font-size: 0.75rem; color: var(--warning); margin-top: -5px; margin-bottom: 15px;">*Extended fasts require adequate electrolytes.</p>
             </div>
             
             <label style="color: var(--text-muted); font-size: 0.85rem;">Dietary Preference</label>
@@ -220,7 +230,10 @@
             </div>
             
             <div class="water-card">
-                <span style="font-size: 0.85rem; color: var(--text-muted);">Water (250ml)</span>
+                <div style="display: flex; flex-direction: column;">
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">Water (250ml)</span>
+                    <button id="waterBellBtn" class="water-bell-btn" onclick="toggleWaterReminders()">🔕 Reminders Off</button>
+                </div>
                 <div class="water-drops" id="waterContainer">
                     <span class="drop" onclick="addWater(1)">💧</span><span class="drop" onclick="addWater(2)">💧</span>
                     <span class="drop" onclick="addWater(3)">💧</span><span class="drop" onclick="addWater(4)">💧</span>
@@ -229,7 +242,7 @@
                 </div>
             </div>
             
-            <div class="timer-label" id="timerLabel">
+            <div class="timer-label">
                 <span id="labelText">FASTING TIME</span>
                 <button id="editTimeBtn" class="edit-time-btn hidden" onclick="openEditTimeModal()" title="Edit Start Time">✏️</button>
             </div>
@@ -266,15 +279,15 @@
                     
                     <div class="stage monk-only hidden" id="stg5">
                         <span class="stage-title monk-text">24-36H: PEAK AUTOPHAGY & BDNF</span>
-                        <span class="stage-desc">Cellular recycling in overdrive. Brain-Derived Neurotrophic Factor (BDNF) spikes for extreme mental clarity.</span>
+                        <span class="stage-desc">Cellular recycling in overdrive. Brain-Derived Neurotrophic Factor spikes for mental clarity.</span>
                     </div>
                     <div class="stage monk-only hidden" id="stg6">
                         <span class="stage-title monk-text">36-48H: DEEP KETOSIS & HGH</span>
-                        <span class="stage-desc">Running on pure fat. Human Growth Hormone (HGH) surges up to 500% to protect muscle mass.</span>
+                        <span class="stage-desc">Running on pure fat. Human Growth Hormone surges up to 500% to protect muscle mass.</span>
                     </div>
                     <div class="stage monk-only hidden" id="stg7">
                         <span class="stage-title monk-text">48-72H+: IMMUNE RESET</span>
-                        <span class="stage-desc">Old white blood cells break down. The body prepares stem cells to generate a new, resilient immune system.</span>
+                        <span class="stage-desc">Old white blood cells break down. Stem cells prepare to generate a new immune system.</span>
                     </div>
                 </div>
             </div>
@@ -370,7 +383,7 @@
         <div class="guideline-box" style="border-left-color: var(--success);">
             <strong>1. Hydrate First:</strong> Drink water.<br><br>
             <strong>2. Protein Opener:</strong> Break fast with protein/fats.<br><br>
-            <strong>3. Pace Yourself:</strong> The longer the fast, the slower you reintroduce carbs.
+            <strong>3. Pace Yourself:</strong> Slowly reintroduce carbs.
         </div>
         <button class="btn-success" onclick="startEatingWindow()">Start Feasting Window</button>
     </div>
@@ -391,6 +404,15 @@
 
 <script>
     let globalTimer;
+    let waterReminderTimer;
+
+    // --- MOBILE FRIENDLY TOAST ---
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.innerText = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 4000);
+    }
 
     // --- MINI SMART DATABASE ---
     const foodDatabase = {
@@ -481,12 +503,10 @@
         };
         if(!p.age || !p.weight) return alert("Please fill in age and weight.");
         
-        let fastGoal;
-        let eatGoal;
-
+        let fastGoal; let eatGoal;
         if (p.isMonkMode) {
             fastGoal = parseInt(document.getElementById('monkGoal').value);
-            eatGoal = 12; // Hardcode a safe 12h refeed window for extended fasts
+            eatGoal = 12; 
         } else {
             fastGoal = (p.gender === 'female' && p.isLuteal) ? 13 : (p.weight / ((p.height/100)**2) > 28 ? 18 : 16);
             eatGoal = 24 - fastGoal;
@@ -504,7 +524,6 @@
         
         document.getElementById('displayGreeting').innerText = `Hello, ${p.name}!`;
         
-        // Update Badge and Roadmap based on Monk Mode
         if (p.isMonkMode) {
             document.getElementById('planBadge').innerText = `🔥 ${p.fastGoal}H MONK MODE`;
             document.getElementById('planBadge').style.color = "var(--monk)";
@@ -527,8 +546,13 @@
 
         populateNutritionModal(p.diet || 'any');
         checkDailyWaterReset();
+        updateWaterBellUI();
         calculateStreak();
         checkActiveState();
+        
+        if(!waterReminderTimer) {
+            waterReminderTimer = setInterval(checkWaterReminders, 60000); 
+        }
     }
 
     function editProfile() {
@@ -800,7 +824,6 @@
         updateCalorieUI();
     }
 
-    // --- DYNAMIC DIET SHEET ---
     function populateNutritionModal(diet) {
         const pList = document.getElementById('proteinList');
         const fList = document.getElementById('fatList');
@@ -824,7 +847,7 @@
         fList.innerHTML = fatHTML;
     }
 
-    // --- WATER & STREAK ---
+    // --- WATER, STREAK & HYBRID REMINDERS ---
     function checkDailyWaterReset() {
         const today = new Date().toLocaleDateString();
         if(localStorage.getItem('waterDate') !== today) {
@@ -843,7 +866,70 @@
         let count = parseInt(localStorage.getItem('waterCount') || 0);
         count = (count >= index) ? index - 1 : index;
         localStorage.setItem('waterCount', count);
+        localStorage.setItem('lastWaterReminder', Date.now()); 
         checkDailyWaterReset();
+    }
+
+    function toggleWaterReminders() {
+        let state = localStorage.getItem('waterReminders') === 'true';
+        if (state) {
+            localStorage.setItem('waterReminders', 'false');
+            updateWaterBellUI();
+            return;
+        }
+
+        if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+            Notification.requestPermission().then(permission => {
+                localStorage.setItem('waterReminders', 'true');
+                updateWaterBellUI();
+                if (permission !== "granted") {
+                    showToast("System alerts blocked. Using in-app reminders instead!");
+                } else {
+                    showToast("System reminders enabled!");
+                }
+            });
+        } else {
+            // Safari iOS / Blocked / Unsupported Fallback
+            localStorage.setItem('waterReminders', 'true');
+            updateWaterBellUI();
+            showToast("In-app reminders enabled!");
+        }
+    }
+
+    function updateWaterBellUI() {
+        const state = localStorage.getItem('waterReminders') === 'true';
+        const btn = document.getElementById('waterBellBtn');
+        if(state) {
+            btn.innerText = "🔔 Reminders On (2h)";
+            btn.style.color = "var(--water)";
+        } else {
+            btn.innerText = "🔕 Reminders Off";
+            btn.style.color = "var(--text-muted)";
+        }
+    }
+
+    function checkWaterReminders() {
+        if (localStorage.getItem('waterReminders') !== 'true') return;
+        
+        const count = parseInt(localStorage.getItem('waterCount') || 0);
+        if (count >= 8) return; 
+
+        const now = new Date();
+        const hour = now.getHours();
+        if (hour < 8 || hour >= 22) return; 
+
+        const lastRemStr = localStorage.getItem('lastWaterReminder');
+        const lastRem = lastRemStr ? parseInt(lastRemStr) : 0;
+        
+        if (now.getTime() - lastRem > 7200000) {
+            // Attempt system notification, fallback to toast
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification("💧 GlowFast", { body: "Time to hydrate! Grab a glass of water." });
+            } else {
+                showToast("💧 Time to hydrate! Grab a glass of water.");
+            }
+            localStorage.setItem('lastWaterReminder', now.getTime());
+        }
     }
 
     function calculateStreak() {
